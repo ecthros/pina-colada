@@ -8,4 +8,5 @@ Pinyapwn is a wireless pineapple framework capable of performing a wide range of
 2. Scanning
 3. TCP Hangups (from [tcpkiller](https://github.com/Kkevsterrr/tcpkiller))
 4. ARP Spoofing
+5. More coming soon!
 
