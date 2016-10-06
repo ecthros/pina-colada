@@ -43,10 +43,10 @@ class Network(object):
         self.profile()
         self.connect()
 
+def init_scan():
+    thisComp = Network()
+    for comp in thisComp.comps:
+        thisComp.cur.execute("INSERT INTO computers(ip,mac,ports) VALUES (%s, %s, %s)", (comp.ip, comp.mac, syn_scan(comp.ip, (0,1000))))
 
-thisComp = Network()
-for comp in thisComp.comps:
-    thisComp.cur.execute("INSERT INTO computers(ip,mac,ports) VALUES (%s, %s, %s)", (comp.ip, comp.mac, syn_scan(comp.ip, (0,1000))))
-
-thisComp.conn.commit()
-thisComp.cur.close()
+    thisComp.conn.commit()
+    thisComp.cur.close()
