@@ -4,7 +4,8 @@ from scans import *
 import subprocess
 import re
 import psycopg2
-
+import time
+import datetime
 #All other computers should be in an array of type computer, having (so far) an ip and a MAC address.
 class Computer(object):
     def __init__(self, ip, mac):
@@ -46,7 +47,19 @@ class Network(object):
 def init_scan():
     thisComp = Network()
     for comp in thisComp.comps:
-        thisComp.cur.execute("INSERT INTO computers(ip,mac,ports) VALUES (%s, %s, %s)", (comp.ip, comp.mac, syn_scan(comp.ip, (0,1000))))
-
+        ports = syn_scan(comp.ip, (0,1000))
+        ports = ','.join(ports)
+        ts = time.time()
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        thisComp.cur.execute(" \
+                UPDATE computers SET ip='{0}', ports='{1}', last_online='{2}' WHERE mac='{3}'; \
+                INSERT INTO computers(ip,mac,ports,last_online) SELECT '{4}', '{5}', '{6}', '{7}' \
+                WHERE NOT EXISTS (SELECT 1 FROM computers WHERE mac='{8}')" \
+                .format(comp.ip, ports, st, comp.mac, comp.ip, comp.mac, ports, st, comp.mac))
+    for network in wifi_scan():
+        thisComp.cur.execute(" \
+                UPDATE networks SET last_online='{0}' WHERE name='{1}'; \
+                INSERT INTO networks(name, status, last_online) SELECT '{2}', 'online', '{3}' WHERE NOT EXISTS (SELECT 1 FROM networks WHERE name='{4}')" \
+                .format(st, network, network, st, network))
     thisComp.conn.commit()
     thisComp.cur.close()
