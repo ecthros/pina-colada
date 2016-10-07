@@ -3,4 +3,8 @@ import subprocess
 from network import *
 from scapy import *
 
-print wifi_scan()
+if __name__ == "__main__":
+    if os.getuid() != 0:
+        print "Please run me as root!"
+        sys.exit()
+    print wifi_scan()
