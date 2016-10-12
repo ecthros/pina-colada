@@ -10,5 +10,4 @@ Pinyapwn is a wireless pineapple framework capable of performing a wide range of
 4. ARP Spoofing
 5. More coming soon!
 
-George, Kevin, Jake, Srujan, Sandra
 
