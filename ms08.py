@@ -8,8 +8,7 @@ import sys
 
 from threading import Thread
 from impacket import smb, uuid
-from impacket.dcerpc import dcerpc
-from impacket.dcerpc import transport
+from impacket.dcerpc.v5 import transport
 
 
 # Portbind shellcode from metasploit; Binds port to TCP port 4444
