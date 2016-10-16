@@ -21,8 +21,15 @@ class Computer(object):
 #   comps -> A list of the computers on the network
 class Network(object):
     def findIP(self):
-        proc = subprocess.Popen(["ifconfig | grep inet | head -n1 | cut -d\  -f12 | cut -d: -f2"], stdout=subprocess.PIPE, shell=True)
-        self.ip = proc.stdout.read()[:-1]
+        proc = subprocess.Popen(["uname -a"], stdout=subprocess.PIPE, shell=True)
+        self.uname = proc.stdout.read()[:-1]
+        if("kali" in self.uname):
+            p1 = subprocess.Popen(["ip a"], stdout=PIPE, shell=True)
+            proc = subprocess.Popen(["grep inet | grep 24 | awk -F\" \" '{print $2}'"], stdin=p1.stdout, stdout=PIPE, shell=True)
+            self.ip = proc.stdout.read()[:-4]
+        else:
+            proc = subprocess.Popen(["ifconfig | grep inet | head -n1 | cut -d\  -f12 | cut -d: -f2"], stdout=subprocess.PIPE, shell=True)
+            self.ip = proc.stdout.read()[:-1]
     def findSubnet(self):
         self.subnet = re.search("(\d*\.\d*\.\d*\.)", self.ip).group(0) + "0/24"
     def arpAll(self):
