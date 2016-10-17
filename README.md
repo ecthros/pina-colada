@@ -1,6 +1,6 @@
-# pinyapwn
+# Piña Colada
 
-Pinyapwn is a wireless pineapple framework capable of performing a wide range of remote offensive attacks on a network or the users of a wireless network. 
+Piña Colada is a wireless pineapple framework capable of performing a wide range of remote offensive attacks on a network or the users of a wireless network. 
 
 ## Capabilities
 
