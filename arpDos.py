@@ -1,6 +1,5 @@
 from scapy.all import *
 from scans import *
-from capability import * 
 import subprocess
 #masq_ip: ip we masquerade as.
 #masc_mac: Masqueraded mac address

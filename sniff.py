@@ -17,7 +17,7 @@ def listen(timeout=5):
             pkts = sniff(timeout=timeout)
             ts = time.time()
             st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-            wrpcap('/home/aces/pinyapwn/packets/{0}.pcap'.format(st), pkts)
+            wrpcap('/home/aces/pina-colada/packets/{0}.pcap'.format(st), pkts)
         except Exception as e:
             print "failure"
             print e
