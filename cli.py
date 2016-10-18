@@ -25,7 +25,7 @@ class PinaColadaCLI(cmd.Cmd):
         self.localIP = self.core.get_local_ip()
         self.ctrlc = False
         ascii()
-        print "Welcome to Pina Colada, a powerful Wifi Pinapple. Type \"help\" to see the list of available commands."
+        print "Welcome to Pina Colada, a powerful Wifi Pineapple. Type \"help\" to see the list of available commands."
    
     def print_help(self, lst):
         it = iter(lst)
