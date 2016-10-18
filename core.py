@@ -13,7 +13,6 @@ import network
 import traceback
 
 from capabilities import *
-from modules import *
 from scapy import *
 
 sys.path.append("capabilities")
@@ -45,7 +44,7 @@ class PinaColada(object):
         pass
 
     def get_categories(self):
-        return ["auxiliary", "dos", "enumeration", "exploitation"]
+        return ["auxiliary", "dos", "arp", "enumeration", "exploitation"]
 
     def get_capabilities(self, category=None):
         caps = []
