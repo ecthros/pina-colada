@@ -25,3 +25,13 @@ def arpBegin(masq_ip, masq_mac, source_mac, dest_ip, dest_mac):
     proc= multiprocessing.Process(target=arpSend, args=(masq_ip, masq_mac, source_mac, dest_ip, dest_mac))
     proc.start()
     return proc
+
+def arpEnd(masq_ip, masq_mac, dest_ip, dest_mac):
+    packet = ARP()
+    packet.op = 2
+    packet.psrc = masq_ip
+    packet.pdst = dest_ip
+    packet.hwdst = dest_mac
+    packet.hwsrc = masq_mac
+    send(packet)
+

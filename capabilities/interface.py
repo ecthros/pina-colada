@@ -29,6 +29,11 @@ class CapabilityInterface(cmd.Cmd):
         self.capability.launch()
         return False
 
+    def do_restore(self, args):
+        print GOOD + "Restoring target"
+        self.capability.restore()
+        return False
+
     def do_show(self, args):
         if args == "options":
             self.do_help(args)

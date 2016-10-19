@@ -24,7 +24,12 @@ class arpSpoof(Capability):
     def arpGo(self):
         os.system("echo 0 > /proc/sys/net/ipv4/ip_forward")
         return arpBegin(self.get_value("masq_ip"), self.get_value("masq_mac"), self.get_value("source_mac"), self.get_value("dest_ip"), self.get_value("dest_mac"))
-    
+   
+    def restore(self):
+        self.proc.terminate()
+        arpEnd(self.get_value("masq_ip"), self.get_value("masq_mac"), self.get_value("dest_ip"), self.get_value("dest_mac"))
+
     def launch(self):
-        return self.arpGo()
+        self.proc = self.arpGo()
+        return self.proc
         

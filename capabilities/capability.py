@@ -20,6 +20,9 @@ class Capability(object):
 
     def launch(self):
         return False
+    
+    def restore(self):
+        return False
 
     def get_value(self, name):
         if name in self.options:
