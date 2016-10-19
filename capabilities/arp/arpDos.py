@@ -16,7 +16,7 @@ class arpSpoof(Capability):
             "masq_ip"   : Option("masq_ip", "", "IP to Masquerade as", True),
             "masq_mac"   : Option("masq_mac", "", "MAC to Masquerade as", True),
             "source_mac"   : Option("source_mac", "", "Mac Address to send traffic to", True),
-            "dest_ip"   : Option("masq_ip", "", "IP address of target", True),
+            "dest_ip"   : Option("dest_ip", "", "IP address of target", True),
             "dest_mac"   : Option("dest_mac", "", "Mac address of target", True),
         }
         self.help_text = INFO + "Spoof the arp table of a target with our ip. We will not forward their traffic, effectively DOSsing them."
