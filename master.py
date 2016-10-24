@@ -2,7 +2,7 @@ from scans import *
 import subprocess
 from network import *
 from scapy import *
-from sniff import *
+from packets/sniff import *
 import time
 
 if __name__ == "__main__":

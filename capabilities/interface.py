@@ -9,7 +9,7 @@ import os
 
 from option import *
 from colorama import *
-from definitions import *
+from start import *
 
 class CapabilityInterface(cmd.Cmd):
     

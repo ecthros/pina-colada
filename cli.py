@@ -1,5 +1,4 @@
 import os
-import target
 import cmd
 import sys
 import traceback

@@ -13,3 +13,11 @@ def ascii():
     print "  / /_/ / / __ \/ __ `/  / /   / __ \/ / __ `/ __  / __ `/    \_/"
     print " / ____/ / / / / /_/ /  / /___/ /_/ / / /_/ / /_/ / /_/ /      Y"
     print "/_/   /_/_/ /_/\__,_/   \____/\____/_/\__,_/\__,_/\__,_/      _|_"
+from colorama import *
+
+GOOD = Fore.GREEN + " + " + Fore.RESET
+BAD = Fore.RED + " - " + Fore.RESET
+WARN = Fore.YELLOW + " * " + Fore.RESET
+INFO = Fore.BLUE + " + " + Fore.RESET
+
+

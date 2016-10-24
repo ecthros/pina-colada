@@ -2,7 +2,7 @@
 #############################################################################
 #   MS08-067 Exploit by Debasis Mohanty (aka Tr0y/nopsled)
 #############################################################################
-
+#TO BE IMPLEMENTED FURTHER
 import struct
 import sys
 

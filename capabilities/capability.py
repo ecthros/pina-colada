@@ -3,7 +3,7 @@ import sys
 
 from option import *
 from colorama import *
-from definitions import *
+from start import *
 
 class Capability(object):
     def __init__(self, core):
