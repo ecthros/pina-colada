@@ -2,7 +2,7 @@ from scans import *
 import subprocess
 from network import *
 from scapy import *
-from packets/sniff import *
+from sniff import *
 import time
 
 if __name__ == "__main__":
@@ -10,5 +10,5 @@ if __name__ == "__main__":
         print "Please run me as root!"
         sys.exit()
     start_sniffing()
-    init_scan()
+    init_network()
     time.sleep(3600)

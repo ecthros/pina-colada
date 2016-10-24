@@ -4,6 +4,8 @@ import sys
 import traceback
 import netifaces as ni
 import core
+from sniff import *
+from network import *
 
 from colorama import *
 from Tkinter import *
@@ -25,6 +27,9 @@ class PinaColadaCLI(cmd.Cmd):
         self.ctrlc = False
         ascii()
         print "Welcome to Pina Colada, a powerful Wifi Pineapple. Type \"help\" to see the list of available commands."
+        print "Packets are being stored in the packets directory."
+        start_sniffing()
+        init_network()
    
     def print_help(self, lst):
         it = iter(lst)

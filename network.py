@@ -51,10 +51,9 @@ class Network(object):
         self.profile()
         self.connect()
 
-def init_scan():
-    thisComp = Network()
+def begin_scan(thisComp, portLow, portHigh):
     for comp in thisComp.comps:
-        ports = syn_scan(comp.ip, (0,1000))
+        ports = syn_scan(comp.ip, (portLow, portHigh))
         ports = ','.join(ports)
         ts = time.time()
         st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -70,3 +69,20 @@ def init_scan():
                 .format(st, network, network, st, network))
     thisComp.conn.commit()
     thisComp.cur.close()
+    return thisComp
+
+def init_network():
+    print "Initializing Network DB..."
+    thisComp = Network()
+    
+    try:
+        thread.start_new_thread(begin_scan, (thisComp, 22, 22))
+    except Exception as e:
+        print "Thread creation failed :("
+        print e
+    
+
+    return thisComp
+
+
+

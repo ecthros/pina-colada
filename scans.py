@@ -22,7 +22,6 @@ def slow_syn_scan(host, ports):
 
 #This is a fast syn scan.
 def syn_scan(target, ports):
-    print "Beginning Scan...\n"
     ans,unans = sr(IP(dst=target)/TCP(dport=ports),timeout=.1,verbose=0)
     rep = []
     for s,r in ans:
