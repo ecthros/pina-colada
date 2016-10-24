@@ -52,10 +52,10 @@ To engage a capability for use, simply use the command "use":
 (Syn Scan) >>
 ```
 
-Once a capability has been loaded, you can view options using a familiar "show options", and set each option by simply running
+Once a capability has been loaded, you can view options using a familiar "show options", and set each option by simply running "set <OPTION> <VALUE>":
 ```
->> set <OPTION> <VALUE>
- + <OPTION> => <VALUE>
+>> set port 12345 
+ + port => 12345
 ```
 
 ## Contributing
