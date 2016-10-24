@@ -68,7 +68,7 @@ def begin_scan(thisComp, portLow, portHigh):
                 INSERT INTO networks(name, status, last_online) SELECT '{2}', 'online', '{3}' WHERE NOT EXISTS (SELECT 1 FROM networks WHERE name='{4}')" \
                 .format(st, network, network, st, network))
     thisComp.conn.commit()
-    thisComp.cur.close()
+    thisComp.cur
     return thisComp
 
 def init_network():

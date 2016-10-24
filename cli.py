@@ -17,6 +17,8 @@ BAD = Fore.RED + " - " + Fore.RESET
 WARN = Fore.YELLOW + " * " + Fore.RESET
 INFO = Fore.BLUE + " + " + Fore.RESET
 
+
+#self.network is a network object, which can connect to the network db.
 class PinaColadaCLI(cmd.Cmd):
     prompt = Fore.BLUE + ">> " + Fore.RESET
 
@@ -29,7 +31,7 @@ class PinaColadaCLI(cmd.Cmd):
         print "Welcome to Pina Colada, a powerful Wifi Pineapple. Type \"help\" to see the list of available commands."
         print "Packets are being stored in the packets directory."
         start_sniffing()
-        init_network()
+        self.network = init_network()
    
     def print_help(self, lst):
         it = iter(lst)
@@ -39,7 +41,7 @@ class PinaColadaCLI(cmd.Cmd):
     def do_help(self, args):
         print "\nAvailable commands are: "
         print "======================="
-        self.print_help(["list", "lists currently loaded targets, available capabilities, and enabled modules.", "quit", "quits","use <capability>", "engages a capability for use. Run \"list\" or \"list capabilities\" for a full list of capabilities."])
+        self.print_help(["list", "lists currently loaded targets, available capabilities, and enabled modules.", "quit", "quits","use <capability>", "engages a capability for use. Run \"list\" or \"list capabilities\" for a full list of capabilities.", "network", "shows all computers on the network"])
     
     def do_quit(self, args):
         self.quit()
@@ -53,6 +55,13 @@ class PinaColadaCLI(cmd.Cmd):
             print(BAD + "An unexpected error occured.")
             return
         cli = CapabilityInterface(self, cap).cmdloop()
+
+    def do_network(self, args):
+        self.network.cur.execute("Select * from computers")
+        print "ID\tIP\t\tMAC\t\t\tPorts\tLast Date"
+        for computer in self.network.cur.fetchall():
+            print str(computer[0]) + "\t" + str(computer[1]) + "\t" + str(computer[2]) + "\t" + str(computer[3]) + "\t" + str(computer[4])
+            
 
     def complete_use(self, text, line, begin_index, end_index):
         line = line.rsplit(" ")[1]
@@ -114,14 +123,15 @@ class PinaColadaCLI(cmd.Cmd):
                 self.quit()            
     
     def do_EOF(self, line):
-        print ""
-        return True
+        quit()
+        return
     
     def emptyline(self):
         return
     
     def quit(self):
         print(BAD + "Exiting...")
+        self.network.cur.close()
         exit()
         return
 
