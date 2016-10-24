@@ -7,10 +7,8 @@ Please only use Piña Colada with explicit permission - please don't hack withou
 ## Usage
 Piña Colada comes with a number of built-in capabilities, and more can be dynamically added at any time. "Capabilities" are simply modules written to accomplish a task, such as a ARP Spoofing, DNS Poisoning, DOSing a user, etc. Piña Colada can be controlled using a familiar Metasploit like interface ("use" engages a capability, option setting works the same, etc), and is both quick to deploy and easy to use. 
 
-To start Piña Colada, first ensure that you have the required dependencies. Scapy is the backbone of the project, but it also relies on other codebases. More dependencies may be added as the project is extended, so make sure your installation remains up to date as it's updated.
-```
-$ python dependencies.py
-```
+To start Piña Colada, first ensure that you have the required dependencies. [Scapy](http://www.secdev.org/projects/scapy/) is the backbone of the project, so make sure you install it before running. More dependencies may be added as the project is extended, so make sure your installation remains up to date as it's updated. An automatic deployment package is coming soon. 
+
 Launching Piña Colada:
 ```
 $ sudo python cli.py
