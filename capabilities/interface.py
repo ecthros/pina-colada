@@ -53,6 +53,10 @@ class CapabilityInterface(cmd.Cmd):
         else:
             print(bad_opt)
 
+    def exec_command(self, comm):
+        self.core.cur.execute(comm)
+        return self.core.cur.fetchall()[0][0]
+
     def get_value(self, name):
         if name in self.options:
             return self.options[name].value

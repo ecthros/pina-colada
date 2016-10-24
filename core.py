@@ -14,13 +14,16 @@ import traceback
 
 from capabilities import *
 from scapy import *
-
+from sniff import *
+from network import *
 sys.path.append("capabilities")
 
 class PinaColada(object):
     
     def __init__(self):
         self.localIP = self.get_local_ip()
+        start_sniffing()
+        self.network = init_network()
         self.categories = None
 
     def get_local_ip(self):

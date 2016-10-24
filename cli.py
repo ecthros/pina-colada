@@ -30,8 +30,6 @@ class PinaColadaCLI(cmd.Cmd):
         ascii()
         print "Welcome to Pina Colada, a powerful Wifi Pineapple. Type \"help\" to see the list of available commands."
         print "Packets are being stored in the packets directory."
-        start_sniffing()
-        self.network = init_network()
    
     def print_help(self, lst):
         it = iter(lst)
@@ -57,9 +55,9 @@ class PinaColadaCLI(cmd.Cmd):
         cli = CapabilityInterface(self, cap).cmdloop()
 
     def do_network(self, args):
-        self.network.cur.execute("Select * from computers")
+        self.core.network.cur.execute("Select * from computers")
         print "ID\tIP\t\tMAC\t\t\tPorts\tLast Date"
-        for computer in self.network.cur.fetchall():
+        for computer in self.core.network.cur.fetchall():
             print str(computer[0]) + "\t" + str(computer[1]) + "\t" + str(computer[2]) + "\t" + str(computer[3]) + "\t" + str(computer[4])
             
 

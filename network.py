@@ -21,6 +21,8 @@ class Computer(object):
 #   comps -> A list of the computers on the network
 class Network(object):
     def findIP(self):
+        proc = subprocess.Popen(["sudo ifconfig | grep ether | awk '{print $2}' | head -1"], stdout=subprocess.PIPE, shell=True)
+        self.mac = proc.stdout.read()[:-1]
         proc = subprocess.Popen(["uname -a"], stdout=subprocess.PIPE, shell=True)
         self.uname = proc.stdout.read()[:-1]
         if("kali" in self.uname):
@@ -40,6 +42,8 @@ class Network(object):
         for item in x:
             a,b = item
             self.comps.append(Computer(a.pdst, b.src))
+        self.comps.append(Computer(self.ip, self.mac))
+
     def connect(self):
         self.conn = psycopg2.connect("dbname='network' user='aces' host='localhost' password='aces'")
         self.cur = self.conn.cursor()
