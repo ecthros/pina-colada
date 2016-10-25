@@ -9,7 +9,6 @@ from network import *
 
 from colorama import *
 from Tkinter import *
-from start import ascii
 from capabilities import *
 
 GOOD = Fore.GREEN + " + " + Fore.RESET
@@ -18,19 +17,25 @@ WARN = Fore.YELLOW + " * " + Fore.RESET
 INFO = Fore.BLUE + " + " + Fore.RESET
 
 
-#self.network is a network object, which can connect to the network db.
 class PinaColadaCLI(cmd.Cmd):
     prompt = Fore.BLUE + ">> " + Fore.RESET
-
+    
     def __init__(self):
         cmd.Cmd.__init__(self)
         self.core = core.PinaColada()
         self.localIP = self.core.get_local_ip()
         self.ctrlc = False
-        ascii()
+        self.ascii_art()
         print "Welcome to Pina Colada, a powerful Wifi Pineapple. Type \"help\" to see the list of available commands."
         print "Packets are being stored in the packets directory."
    
+    def ascii_art(self):
+        print "    ____  _  /\//          ______      __          __        ' ."    
+        print "   / __ \(_)//\/ ____ _   / ____/___  / /___ _____/ /___ _   \~~~/"
+        print "  / /_/ / / __ \/ __ `/  / /   / __ \/ / __ `/ __  / __ `/    \_/"
+        print " / ____/ / / / / /_/ /  / /___/ /_/ / / /_/ / /_/ / /_/ /      Y"
+        print "/_/   /_/_/ /_/\__,_/   \____/\____/_/\__,_/\__,_/\__,_/      _|_"
+
     def print_help(self, lst):
         it = iter(lst)
         for x in it:

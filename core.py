@@ -23,7 +23,7 @@ class PinaColada(object):
     def __init__(self):
         self.localIP = self.get_local_ip()
         start_sniffing()
-        self.network = init_network()
+        #self.network = init_network()
         self.categories = None
 
     def get_local_ip(self):
