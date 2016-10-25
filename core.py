@@ -23,7 +23,7 @@ class PinaColada(object):
     def __init__(self):
         self.localIP = self.get_local_ip()
         start_sniffing()
-        self.network = init_network()
+        #self.network = init_network()
         self.categories = None
 
     def get_local_ip(self):
@@ -66,7 +66,7 @@ class PinaColada(object):
                 sys.path.insert(0, "capabilities/" + loc)
             mod = importlib.import_module(bd)
             clsmembers = inspect.getmembers(sys.modules[bd], inspect.isclass)
-            cap = [m for m in clsmembers if m[1].__module__ == bd][0][1]() 
+            cap = [m for m in clsmembers if m[1].__module__ == bd][0][1](self) 
             return cap
         except Exception as e:
             print e

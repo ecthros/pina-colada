@@ -2,7 +2,8 @@ from capability import *
 
 class Syn(Capability):
     
-    def __init__(self):
+    def __init__(self, core):
+        super(Syn, self).__init__(core)
         self.name = "Syn Scan"
         self.options = {
                 "port"   : Option("port", 53923, "port to connect to", True),
