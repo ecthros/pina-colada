@@ -1,11 +1,12 @@
 #This is the template to create backdoors. Please copy your backdoor into the suggested spots. Places you need to input are shown by ~tildes~.
-from backdoor import *
+from capability import *
 #Remember extra imports.
 
 class ~NAME~(Backdoor):
     prompt = Fore.RED + "~NAME~" + Fore.BLUE + ">> " + Fore.RESET
 
     def __init__(self, core):
+        super(~NAME~, self).__init__core()
 	cmd.Cmd.__init__(self)
         self.intro = GOOD + "Using ~NAME~ module..."
         self.core = core
