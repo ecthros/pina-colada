@@ -12,30 +12,17 @@ import zlib
 import json
 import time
 
+from Crypto.Util import number
 from Crypto.Cipher import AES
 from Crypto import Random
 from datetime import datetime
 
-VERBOSE = "-v" in sys.argv
+SERVER_PORT = 8888
+SERVER_IPS = "127.0.0.1"
 
-DEBUG = "-d" in sys.argv
-
-my_hwnd = 0
-my_pid = os.getpid()
-my_name = ""
-
-SERVER_PORT = 9999
-SERVER_IPS = ["127.0.0.1"]
-
-VERSION = 0.59
 ERR_MSG = "[!] Lost server connection. Please try again later."
 SEP = "|:|"
 END_SEP = "!:!"
-
-if DEBUG:
-    VERBOSE = True
-    SERVER_PORT = 8888
-    SERVER_IPS = ["127.0.0.1"]
 
 ####################################################################
 #

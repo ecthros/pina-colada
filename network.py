@@ -33,6 +33,7 @@ class Network(object):
             proc = subprocess.Popen(["ifconfig | grep inet | head -n1 | cut -d\  -f12 | cut -d: -f2"], stdout=subprocess.PIPE, shell=True)
             self.ip = proc.stdout.read()[:-1]
     def findSubnet(self):
+        print self.ip
         self.subnet = re.search("(\d*\.\d*\.\d*\.)", self.ip).group(0) + "0/24"
     def arpAll(self):
         self.otherComps = arping(self.subnet, verbose=0)
