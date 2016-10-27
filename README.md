@@ -38,8 +38,14 @@ To see a full list of available capabilities, run "list":
 >> list
  + Available capabilities:
   + dos
+   - land
    - syn
-   ... (output truncated)
+   - tcpkiller
+  + arp
+   - arpBegin
+   - arpDos
+   - arpSpoof
+   ...
 >>
 ```
 
