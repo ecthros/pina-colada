@@ -1,6 +1,7 @@
 from capability import *
 from scapy.all import *
 import multiprocessing
+
 class Syn(Capability):
     
     def __init__(self, core):

@@ -23,7 +23,6 @@ class PinaColadaCLI(cmd.Cmd):
     def __init__(self):
         cmd.Cmd.__init__(self)
         self.core = core.PinaColada()
-        self.localIP = self.core.get_local_ip()
         self.ctrlc = False
         self.ascii_art()
         print "Welcome to Pina Colada, a powerful Wifi Pineapple. Type \"help\" to see the list of available commands."

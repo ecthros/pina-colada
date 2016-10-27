@@ -1,11 +1,11 @@
 from scapy.all import *
 import logging
 from scans import *
-import subprocess
-import re
 import psycopg2
 import time
 import datetime
+
+
 #All other computers should be in an array of type computer, having (so far) an ip and a MAC address.
 class Computer(object):
     def __init__(self, ip, mac):
@@ -13,48 +13,51 @@ class Computer(object):
         self.mac = mac
 
 
-#The overall object, called master, creates its own ip, subnet, and list of other computers on the network.
-#Fields:
+# The overall object, called master, creates its own ip, subnet, and list of other computers on the network.
+# Fields:
 #   ip -> the ip of this computer
-#   subnet -> the subnet (takes the ip, sticks a 0 and /24 at the end
+#   subnet -> the cidr
 #   otherComps -> a result of running arping against the network (gives back unparsed packets)
 #   comps -> A list of the computers on the network
+
 class Network(object):
-    def findIP(self):
-        proc = subprocess.Popen(["sudo ifconfig | grep ether | awk '{print $2}' | head -1"], stdout=subprocess.PIPE, shell=True)
-        self.mac = proc.stdout.read()[:-1]
-        proc = subprocess.Popen(["uname -a"], stdout=subprocess.PIPE, shell=True)
-        self.uname = proc.stdout.read()[:-1]
-        if("kali" in self.uname):
-            p1 = subprocess.Popen(["ip a"], stdout=PIPE, shell=True)
-            proc = subprocess.Popen(["grep inet | grep 24 | awk -F\" \" '{print $2}'"], stdin=p1.stdout, stdout=PIPE, shell=True)
-            self.ip = proc.stdout.read()[:-4]
-        else:
-            proc = subprocess.Popen(["ifconfig | grep inet | head -n1 | cut -d\  -f12 | cut -d: -f2"], stdout=subprocess.PIPE, shell=True)
-            self.ip = proc.stdout.read()[:-1]
-    def findSubnet(self):
-        print self.ip
-        self.subnet = re.search("(\d*\.\d*\.\d*\.)", self.ip).group(0) + "0/24"
-    def arpAll(self):
-        self.otherComps = arping(self.subnet, verbose=0)
+
+    def __init__(self, core):
+        self.core = core
+        self.iface = self.core.default_iface  # TODO
+        self.ip = self.core.get_local_ip(self.iface)
+        self.cidr = self.core.get_cidr(self.iface)
+        self.subnet = str(self.cidr.network)
+        self.mac = self.core.get_local_mac(self.iface)
+        #self.otherComps = self.arp_all()
+        #self.comps = self.profile()
+        self.conn = self.connect()
+        self.cur = self.conn.cursor() if self.conn else None
+
+
+    def arp_all(self):
+        #try:
+
+            return arping(self.subnet, verbose=0)
+        #except:
+        #    return []
+
     def profile(self):
-        self.comps = []
-        x,y = self.otherComps
+        comps = []
+        x, y = self.otherComps
         for item in x:
-            a,b = item
-            self.comps.append(Computer(a.pdst, b.src))
-        self.comps.append(Computer(self.ip, self.mac))
+            a, b = item
+            comps.append(Computer(a.pdst, b.src))
+        comps.append(Computer(self.ip, self.mac))
+        return comps
 
     def connect(self):
-        self.conn = psycopg2.connect("dbname='network' user='aces' host='localhost' password='aces'")
-        self.cur = self.conn.cursor()
+        try:
+            return psycopg2.connect("dbname='network' user='aces' host='localhost' password='aces'")
+        except:
+            #logging.log(ERROR, "Could not connect to database")  TODO
+            return None
 
-    def __init__(self):
-        self.findIP()
-        self.findSubnet()
-        self.arpAll()
-        self.profile()
-        self.connect()
 
 def begin_scan(thisComp, portLow, portHigh):
     for comp in thisComp.comps:
@@ -76,12 +79,12 @@ def begin_scan(thisComp, portLow, portHigh):
     thisComp.cur
     return thisComp
 
-def init_network():
+def init_network(core):
     print "Initializing Network DB..."
-    thisComp = Network()
+    thisComp = Network(core)
     
     try:
-        thread.start_new_thread(begin_scan, (thisComp, 22, 22))
+        pass#thread.start_new_thread(begin_scan, (thisComp, 22, 22))
     except Exception as e:
         print "Thread creation failed :("
         print e

@@ -9,7 +9,12 @@ import os
 
 from option import *
 from colorama import *
-from start import *
+
+GOOD = Fore.GREEN + " + " + Fore.RESET
+BAD = Fore.RED + " - " + Fore.RESET
+WARN = Fore.YELLOW + " * " + Fore.RESET
+INFO = Fore.BLUE + " + " + Fore.RESET
+
 
 class CapabilityInterface(cmd.Cmd):
     
