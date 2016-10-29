@@ -2,24 +2,21 @@
 from capability import *
 #Remember extra imports.
 
-class ~NAME~(Backdoor):
-    prompt = Fore.RED + "~NAME~" + Fore.BLUE + ">> " + Fore.RESET
+class ~NAME~(Capability):
 
     def __init__(self, core):
         super(~NAME~, self).__init__core()
-	cmd.Cmd.__init__(self)
+        self.name = "~NAME~"
         self.intro = GOOD + "Using ~NAME~ module..."
         self.core = core
         self.options = { #~Input extra options. You almost always need a port.~
+                #example: "hi":  Option("hi", "default", description", True),
                 }
-        self.allow_modules = True
-        self.modules = {}
         self.help_text = ""
 
-    def get_command(self):
-	#~Add the final command.~
+    def restore(self):
 
-    def do_exploit(self, args):
+    def launch(self):
 	#~Add all commands needed to run the program.~
 
 #After you have filled out this entire program, move it to the correct folder. 
