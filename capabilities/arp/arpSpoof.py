@@ -46,7 +46,7 @@ class arpSpoof(Capability):
     def restore(self):
         self.getVars()
         self.proc.terminate()
-        arpEnd(self.get_value("masq_ip"), self.get_value("masq_mac"), self.get_value("dest_ip"), self.get_value("dest_mac"))
+        arpEnd(self.masq_ip, self.masq_mac, self.dest_ip, self.dest_mac)
 
 
     def launch(self):
