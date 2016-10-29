@@ -43,7 +43,7 @@ class PinaColadaCLI(cmd.Cmd):
     def do_help(self, args):
         print "\nAvailable commands are: "
         print "======================="
-        self.print_help(["list", "lists currently loaded targets, available capabilities, and enabled modules.", "quit", "quits","use <capability>", "engages a capability for use. Run \"list\" or \"list capabilities\" for a full list of capabilities.", "network", "shows all computers on the network"])
+        self.print_help(["list", "lists currently loaded targets, available capabilities, and enabled modules.", "quit", "quits","use <capability>", "engages a capability for use. Run \"list\" or \"list capabilities\" for a full list of capabilities.", "network", "shows all computers on the network", "discover", "use arp to discover all computers on the network and write to database"])
     
     def do_quit(self, args):
         self.quit()
