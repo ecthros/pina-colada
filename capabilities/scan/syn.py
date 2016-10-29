@@ -1,7 +1,5 @@
-#This is the template to create backdoors. Please copy your backdoor into the suggested spots. Places you need to input are shown by ~tildes~.
 from capability import *
 from scapy.all import *
-#Remember extra imports.
 
 class syn(Capability):
 
@@ -12,8 +10,8 @@ class syn(Capability):
         self.core = core
         self.options = { 
                 "target":       Option("target", "", "target device to scan", True),
-                "startPort":    Option("startPort", "", "Beginning port of scan", True),
-                "endPort":      Option("endPort", "", "Ending port of range", True),
+                "start":    Option("start", "", "beginning port of scan", True),
+                "end":      Option("end", "", "ending port of range", True),
                 }
         self.help_text = "Scans a computer on a specific port."
 
@@ -30,7 +28,7 @@ class syn(Capability):
 
 
     def launch(self):
-        self.syn_scan(self.get_value("target"), (int(self.get_value("startPort")), int(self.get_value("endPort"))))
+        self.syn_scan(self.get_value("target"), (int(self.get_value("start")), int(self.get_value("end"))))
 
 
 
