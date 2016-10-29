@@ -17,8 +17,8 @@ import traceback
 
 from capabilities import *
 from scapy import *
-from sniff import *
 import network
+from start import *
 sys.path.append("capabilities")
 
 class PinaColada(object):

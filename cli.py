@@ -4,18 +4,16 @@ import sys
 import traceback
 import netifaces as ni
 import core
-from sniff import *
 from network import *
 
 from colorama import *
 from Tkinter import *
 from capabilities import *
-
+from start import *
 GOOD = Fore.GREEN + " + " + Fore.RESET
 BAD = Fore.RED + " - " + Fore.RESET
 WARN = Fore.YELLOW + " * " + Fore.RESET
 INFO = Fore.BLUE + " + " + Fore.RESET
-
 
 class PinaColadaCLI(cmd.Cmd):
     prompt = Fore.BLUE + ">> " + Fore.RESET
