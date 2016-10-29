@@ -5,7 +5,7 @@ from capability import *
 class ~NAME~(Capability):
 
     def __init__(self, core):
-        super(~NAME~, self).__init__core()
+        super(~NAME~, self).__init__(core)
         self.name = "~NAME~"
         self.intro = GOOD + "Using ~NAME~ module..."
         self.core = core

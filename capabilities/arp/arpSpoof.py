@@ -19,7 +19,6 @@ class arpSpoof(Capability):
     def __init__(self, core):
         super(arpSpoof, self).__init__(core)
         self.name = "Arp Spoof"
-        self.help_text = INFO + "Spoof the arp table of a target with an ip. This allows you to see all their traffic."
         self.options = {
             "masq" : Option("masq", "", "ID of the computer to masquerade as", True),
             "source": Option("source", "", "ID of the source computer", True),
@@ -53,4 +52,3 @@ class arpSpoof(Capability):
         self.getVars()
         self.proc = self.arpGo()
         return self.proc
-        

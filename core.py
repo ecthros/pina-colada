@@ -63,7 +63,7 @@ class PinaColada(object):
         pass
 
     def get_categories(self):
-        return ["auxiliary", "dos", "arp", "enumeration", "exploitation"]
+        return ["auxiliary", "dos", "arp", "enumeration", "exploitation", "scan"]
 
     def get_capabilities(self, category=None):
         caps = []
