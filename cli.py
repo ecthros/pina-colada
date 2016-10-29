@@ -26,7 +26,6 @@ class PinaColadaCLI(cmd.Cmd):
         self.ctrlc = False
         self.ascii_art()
         print "Welcome to Pina Colada, a powerful Wifi Pineapple. Type \"help\" to see the list of available commands."
-        print "Packets are being stored in the packets directory."
    
     def ascii_art(self):
         print "    ____  _  /\//          ______      __          __        ' ."    
