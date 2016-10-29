@@ -78,6 +78,11 @@ class PinaColadaCLI(cmd.Cmd):
             bds = self.core.get_capabilities(segment[0]) 
             return [item for item in bds if item.startswith(text)]
 
+    def do_discover(self, args):
+        self.core.network.profile()
+        self.core.network.write_db()
+        self.do_network("non")
+
     def do_list(self, args):
         if args == "capabilities" or len(args) == 0:
             print(GOOD+ "Available capabilities: ")
@@ -133,7 +138,8 @@ class PinaColadaCLI(cmd.Cmd):
     
     def quit(self):
         print(BAD + "Exiting...")
-        self.network.cur.close()
+        self.core.network.cur.commit()
+        self.core.network.cur.close()
         exit()
         return
 

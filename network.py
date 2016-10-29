@@ -36,20 +36,19 @@ class Network(object):
 
 
     def arp_all(self):
-        #try:
+        self.otherComps=arping(str(self.subnet) + "/24", verbose=3)
 
-            return arping(self.subnet, verbose=0)
-        #except:
-        #    return []
 
+    #Profiles the networks by arping everything and adds us.
     def profile(self):
         comps = []
+        self.arp_all()
         x, y = self.otherComps
         for item in x:
             a, b = item
             comps.append(Computer(a.pdst, b.src))
         comps.append(Computer(self.ip, self.mac))
-        return comps
+        self.comps = comps
 
     def connect(self):
         try:
@@ -58,6 +57,18 @@ class Network(object):
             #logging.log(ERROR, "Could not connect to database")  TODO
             return None
 
+    #Just writes all information in this object to the database. No computation done here.
+    def write_db(self):
+        for comp in self.comps:
+            ts = time.time()
+            ports = ""
+            st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+            self.cur.execute(" \
+                UPDATE computers SET ip='{0}', ports='{1}', last_online='{2}' WHERE mac='{3}'; \
+                INSERT INTO computers(ip,mac,ports,last_online) SELECT '{4}', '{5}', '{6}', '{7}' \
+                WHERE NOT EXISTS (SELECT 1 FROM computers WHERE mac='{8}')" \
+                .format(comp.ip, ports, st, comp.mac, comp.ip, comp.mac, ports, st, comp.mac))
+        self.conn.commit()
 
 def begin_scan(thisComp, portLow, portHigh):
     for comp in thisComp.comps:
