@@ -29,6 +29,7 @@ class PinaColada(object):
         self.network = network.init_network(self)
         self.cur = self.network.cur
         self.categories = None
+        self.loaded_capabilities = {}
 
     def get_local_ip(self, iface):
         addrs = ni.ifaddresses(iface)
@@ -80,10 +81,14 @@ class PinaColada(object):
             loc, bd =  bd.rsplit("/", 1)
             if "capabilities/" + loc not in sys.path: 
                 sys.path.insert(0, "capabilities/" + loc)
-            mod = importlib.import_module(bd)
-            clsmembers = inspect.getmembers(sys.modules[bd], inspect.isclass)
-            cap = [m for m in clsmembers if m[1].__module__ == bd][0][1](self) 
-            return cap
+            if bd not in self.loaded_capabilities:
+                mod = importlib.import_module(bd)
+                clsmembers = inspect.getmembers(sys.modules[bd], inspect.isclass)
+                cap = [m for m in clsmembers if m[1].__module__ == bd][0][1](self)
+                self.loaded_capabilities[bd] = cap
+                return cap
+            else:
+                return self.loaded_capabilities[bd]
         except Exception as e:
             print e
             traceback.print_exc()
