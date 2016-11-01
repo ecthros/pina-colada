@@ -56,7 +56,7 @@ class PinaColadaCLI(cmd.Cmd):
         cli = CapabilityInterface(self, cap).cmdloop()
 
     def do_network(self, args):
-        self.core.network.cur.execute("Select * from computers")
+        self.core.network.cur.execute("Select * from computers ORDER BY ip ASC")
         print "ID\tIP\t\tMAC\t\t\tPorts\tLast Date"
         for computer in self.core.network.cur.fetchall():
             print str(computer[0]) + "\t" + str(computer[1]) + "\t" + str(computer[2]) + "\t" + str(computer[3]) + "\t" + str(computer[4])

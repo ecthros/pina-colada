@@ -33,7 +33,7 @@ class sniffPack(Capability):
         pass
 
     def launch(self):
-        os.system("mkdir" + str(self.get_value("folder")))
+        os.system("mkdir " + str(self.get_value("folder")))
         try:
             thread.start_new_thread (self.listen, ()) 
         except Exception as e:
