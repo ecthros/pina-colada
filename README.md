@@ -1,6 +1,6 @@
 # Piña Colada
 
-Piña Colada, a powerful and extensible wireless pineapple, capable of performing a wide range of remote offensive attacks on a network. It can currently be controlled only via a command line interface, but a Command and Control remote server functionality is coming soon.
+Piña Colada, a powerful and extensible wireless pineapple, capable of performing a wide range of remote offensive attacks on a network. It can currently be controlled only via a command line interface, but a Command and Control remote server functionality is coming soon. An Android app will allow you to control the Piña Colada via the Command and Control server (Under Construction).
 
 Please only use Piña Colada with explicit permission - please don't hack without asking.
 
