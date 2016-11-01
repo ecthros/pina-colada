@@ -23,6 +23,7 @@ unpad = lambda s: s[0:-ord(s[-1])]
 
 SEP = "|:|"
 END_SEP = "!:!"
+
 MSG = 0
 NEWC = 1
 CLOSE = 2
@@ -31,10 +32,15 @@ REQ = 4
 RELOAD = 5
 
 
+CLI_INIT = 10
+CLI = 11
+CLI_RESP = 12
+
+
 def get_date():
     return "%02d:%02d:%02d" % (datetime.now().hour, datetime.now().minute, datetime.now().second)
 
-class PinaColadaServer():
+class SampleServer():
 
     def __init__(self, name, port):
         self.name = name
@@ -135,7 +141,6 @@ class PinaColadaServer():
     def inbound(self, d, c):
         message_type, name, data = self.unpack_data(d)
         print("%s : %s (%d|%s): %s" % (get_date(), name, self.get_id(c), message_type, data))
-        pass # TODO HANDLE INBOUND COMMANDS
 
     def get_id(self, c):
         id = [id for id in self.clients if self.clients[id] == c]
@@ -157,6 +162,10 @@ class PinaColadaServer():
 
     def cmdloop(self, cmd):
         key = cmd.split()[0]
+        for id in self.clients:
+            self.direct(CLI_INIT, self.clients[id], "cli init")
+
+            self.direct(CLI, self.clients[id], "list")
         if key == "clients":
             if len(self.ids.values()) == 0:
                 print "[*] No currently connected clients"
@@ -177,7 +186,6 @@ class PinaColadaServer():
         else:
             self.direct(MSG, c, "[!] Unknown command %s." % data)
 
-    # TODO BUG
     def close(self, id):
         try:
             self.direct(CLOSE, self.clients[id], "[!] You have been disconnected from the server.")
@@ -233,13 +241,6 @@ class PinaColadaServer():
     def save_seps(self, message):
         return str(message).replace(SEP, "|::|").replace(END_SEP, "!::!")
 
-
-    def message(self, name, msg):
-        if not self.get_ids_by_name(name):
-            print("[!] No client by name %s connected." % name)
-        for id in self.get_ids_by_name(name):
-            self.direct(MSG, self.clients[id], "SERVER: " + msg)
-
     def print_exc(self, e, msg, always=False):
         if always or VERBOSE:
             print msg
@@ -252,7 +253,7 @@ if __name__ == "__main__":
     threads = {}
     servers = {}
     
-    servers["PinaColada"] = PinaColadaServer("PinaColada", 9999)
+    servers["PinaColada"] = SampleServer("PinaColada", 9999)
     for c in servers:
         threads[c] = threading.Thread(target=servers[c].server)
         threads[c].start()
@@ -266,7 +267,7 @@ if __name__ == "__main__":
 
             cmds = cmd.split()
 
-            chatrooms[context].cmdloop(cmd)
+            servers["PinaColada"].cmdloop(cmd)
 
     except KeyboardInterrupt:
         print("[!] Exiting...")

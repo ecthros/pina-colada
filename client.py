@@ -1,26 +1,32 @@
 import socket
 import threading
 import sys
-import traceback
 import os
 import base64
 import random
-import ctypes
-import importlib
-import inspect
 import zlib
 import json
-import time
+import traceback
+import core
+import subprocess
+import pexpect
+import re
 
-from Crypto.Util import number
+from colorama import *
 from Crypto.Cipher import AES
 from Crypto import Random
 from datetime import datetime
 
-SERVER_PORT = 8888
-SERVER_IPS = "127.0.0.1"
+GOOD = Fore.GREEN + " + " + Fore.RESET
+BAD = Fore.RED + " - " + Fore.RESET
+WARN = Fore.YELLOW + " * " + Fore.RESET
+INFO = Fore.BLUE + " + " + Fore.RESET
+prompt = Fore.BLUE + ">> " + Fore.RESET
 
-ERR_MSG = "[!] Lost server connection. Please try again later."
+SERVER_PORT = 9999
+SERVER_IP = "127.0.0.1"
+
+ERR_MSG = BAD + "Lost server connection. Please try again later."
 SEP = "|:|"
 END_SEP = "!:!"
 
@@ -31,10 +37,14 @@ END_SEP = "!:!"
 ####################################################################
 
 MSG = 0
-NEWC = 1
+GET = 1
 CLOSE = 2
 INFO = 3
 REQ = 4
+
+CLI_INIT = 10
+CLI = 11
+CLI_RESP = 12
 
 BS = AES.block_size
 pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
@@ -45,74 +55,49 @@ save_seps = lambda m: m.replace(SEP, "|::|").replace(END_SEP, "!::!")
 def get_date():
     return "%02d:%02d:%02d" % (datetime.now().hour, datetime.now().minute, datetime.now().second)
 
-class Client(object):
-    def __init__(self, name, target_port, server_ips):
+class PinaColadaSocket(object):
+    def __init__(self, name, target_port, server_ip):
         self.port = target_port
-        self.server_iter = iter(server_ips)
-        self.server_ips = server_ips
-        self.ip = self.server_iter.next()
+        self.ip = server_ip
         self.name = name
         self.socket = None
-
-        self.VERBOSE = VERBOSE
-
+        self.core = core.PinaColada()
         self.keys = {}
-        self.message_history = {}
-        self.prompt = ">> "
+        self.conn = None
+        self.cli = None
+        print "[*] Attempting to connect to server"
 
     def connect(self):
         client = None
-        while True:
-            try:
-                client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                client.connect((self.ip, self.port))
-                self.socket = client
-
-                shared_prime, shared_base = client.recv(1024).split("|")
-                shared_prime = int(shared_prime)
-                shared_base = int(shared_base)
-                client_secret = random.randint(0, 99)
-                a = long(client.recv(1024))
-                b = (shared_base**client_secret) % shared_prime
-                client.send("%ld" % b)
-                self.keys[client] = pad("%ld" % ((a ** client_secret) % shared_prime))
-
-                conn = threading.Thread(target=self.receive, args=(client,))
-                conn.start()
-
-                self.send(NEWC, my_name)
-                print("[*] Successfully connected.")
-
-                client.settimeout(None)  # Remove the timeout
-                self.client_input() # TODO
-            except socket.timeout:
-                if not self.set_backup():
-                    client.close()
-                    return False
-                continue
-            except EnvironmentError as e:
-                if e.errno == 10061 and not self.set_backup():
-                    client.close()
-                    return False
-                continue
-            except Exception as e:
-                print_exc(e, ERR_MSG, always=True)
-                raw_input("")
-                continue
-
-    def client_input(self):
-        self.server_down = False
         try:
-            while not self.server_down:
-                print("\r%s" % self.prompt),
-                data = raw_input("")
-                if not data: # TODO
-                    continue
-                self.send(MSG, data)
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client.connect((self.ip, self.port))
+            self.socket = client
+            shared_prime, shared_base = client.recv(10).split("|")
+            shared_prime = int(shared_prime)
+            shared_base = int(shared_base)
+            client_secret = random.randint(0, 99)
+            a = long(client.recv(1024))
+            b = (shared_base**client_secret) % shared_prime
+            client.send("%ld" % b)
+            self.keys[client] = pad("%ld" % ((a ** client_secret) % shared_prime))
+            client.settimeout(None)  # Remove the timeout
+            self.send(MSG, "PinaColada")
+            print("[*] Successfully connected.")
+            self.receive(client)
+
+
+
+
         except Exception as e:
             print e
+            print traceback.print_exc()
+            raw_input("")
         finally:
-            self.socket.close()
+            self.shutdown()
+
+    def shutdown(self):
+        print GOOD + "Exiting..."
 
     ####################################################################
     #
@@ -120,9 +105,39 @@ class Client(object):
     #
     ####################################################################
 
+    def get(self, request):
+        reqs = request.split()
+        if request == "help":
+            return "help message"  # TODO
+        if request == "categories":
+            return self.core.get_categories()
+        if "capabilities" in request:
+            return self.core.get_capabilities(category=reqs[1])  # TODO POTENTIAL BUG
+        if request == "ip":
+            return self.core.get_local_ip(self.core.default_iface)  # TODO ADD INTERFACES
+        if request == "list":
+            info = {}
+            for cat in self.core.get_categories():
+                caps = self.core.get_capabilities(cat)
+                if caps != []:
+                    info[cat] = []
+                for cap in caps:
+                    info[cat].append(cap)
+            return info
+
+    def cli_init(self):
+        self.cli = pexpect.spawn("sudo python cli.py")
+        self.cli.expect(re.escape(prompt))
+        return self.cli.before
+
+    def cli_communicate(self, data):
+        self.cli.sendline(data)
+        self.cli.expect(re.escape(prompt))
+        return self.cli.before
+
     def send(self, message_type, data):
-        print("<OUT: %s>" % self.pack_data(message_type, my_name, data))
-        self.socket.send(self.encrypt(self.pack_data(message_type, my_name, data), self.socket))
+        #print "SENDING: <%d, %s>" %(message_type, data)
+        self.socket.send(self.encrypt(self.pack_data(message_type, self.name, data), self.socket))
 
     def encrypt(self, string, sock):
         iv = Random.new().read(AES.block_size)
@@ -145,47 +160,17 @@ class Client(object):
         return str(message_type) + SEP + save_seps(name) + SEP + save_seps(data) + END_SEP
 
     def print_msg(self, message):
-        newline = message.find('\n')
-        prompt = self.prompt
-        msg_width = 80 - len(self.name) - 2 - 8  # 80 is max, 2 for ": ", 8 for date
-        if newline != -1:  # has newline
-            if newline < msg_width:
-                print("\r" + "{:71} {:>8}".format(message[:newline], get_date())),
-                print("\r" + message[newline+1:] + "\n" + prompt + self.current_buffer),
-        elif len(message) > msg_width:
-            rspace = message.rfind(" ", 0, 71)  # find the rightmost space
-            if rspace > 20:
-                print("\r" + "{:71} {:>8}".format(message[:rspace], get_date())),
-                print("\r" + " " * (len(self.name)+2) + message[rspace+1:] + "\n" + prompt + self.current_buffer),
-            else:  # one looooong word
-                print("\r" + "{:71} {:>8}".format(message[:71], get_date())),
-                print("\r" + " " * (len(self.name)+2) + message[71:] + "\n" + prompt + self.current_buffer),
-        else:  # Will fit in one line
-            print("\r" + "{:71} {:>8}".format(message, get_date()) + prompt + self.current_buffer),
+       print message
 
-    def handle_commands(self, command):
-        full_command = command
-        typ = REQ
-        if len(command.split()) > 1:
-            command = command.split()[0]
-        if command in self.commands:
-            typ = self.commands[command]
-        elif command == "\\cls" or command == "\\clear":
-            os.system("cls")
-            return False
-        elif command == "\\reload":
-            self.check_version(self.json_obj, override=True) #TODO
-            return False
-        else:
-            typ = REQ
-        self.send(typ, full_command)
-
-    def handle(self, sock, data):
-        if VERBOSE:
-            print("<IN: %s>" % data)
-
+    def handle(self, data):
         message_type, name, data = self.unpack_data(data)
-        self.print_msg(data)    
+        message_type = int(message_type)
+        print message_type, name, data
+        if message_type == CLI_INIT:
+            self.send(CLI_RESP, self.cli_init())
+        if message_type == CLI:
+            self.send(CLI_RESP, self.cli_communicate(data))
+        self.print_msg(data)
     ####################################################################
     #
     # Receive Handling
@@ -198,12 +183,17 @@ class Client(object):
                 data = sock.recv(1024)
                 msgs = filter(None, self.decrypt(data, sock).split(END_SEP))
                 for m in msgs:
-                    self.handle(sock, m)
+                    self.handle(m)
         except Exception as e:
+            print e
+            traceback.print_exc()
             sock.close()
         finally:
             sock.close()
-            sys.exit()
+            self.shutdown()
 
 if __name__ == "__main__":
-    c = Client("Client", SERVER_PORT, SERVER_IPS).connect()
+    if os.getuid() != 0:
+        print BAD + "Please run me as root!"
+        sys.exit()
+    c = PinaColadaSocket("Client", SERVER_PORT, SERVER_IP).connect()
