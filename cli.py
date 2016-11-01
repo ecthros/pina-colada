@@ -9,7 +9,7 @@ from network import *
 from colorama import *
 from Tkinter import *
 from capabilities import *
-from start import *
+
 GOOD = Fore.GREEN + " + " + Fore.RESET
 BAD = Fore.RED + " - " + Fore.RESET
 WARN = Fore.YELLOW + " * " + Fore.RESET
