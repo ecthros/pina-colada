@@ -11,7 +11,6 @@ import netaddr
 
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
-import scans
 import network
 import traceback
 
@@ -23,12 +22,21 @@ sys.path.append("capabilities")
 class PinaColada(object):
     
     def __init__(self):
-        self.default_iface = "en1" if (sys.platform == "darwin") else "eth0"
+        self.interfaces = self.get_available_interfaces()
+        self.default_iface = self.interfaces[0]
         self.localIP = self.get_local_ip(self.default_iface)
         self.network = network.init_network(self)
         self.cur = self.network.cur
         self.categories = None
         self.loaded_capabilities = {}
+
+    def get_available_interfaces(self):
+        interfaces = ni.interfaces()
+        available = []
+        for iface in interfaces:
+            if ni.AF_INET in ni.ifaddresses(iface) and "lo0" not in iface:
+                available.append(iface)
+        return available
 
     def get_local_ip(self, iface):
         addrs = ni.ifaddresses(iface)

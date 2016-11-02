@@ -1,6 +1,5 @@
 from scapy.all import *
 import logging
-from scans import *
 import psycopg2
 import time
 import datetime

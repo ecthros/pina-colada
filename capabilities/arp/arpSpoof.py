@@ -20,9 +20,9 @@ class arpSpoof(Capability):
         super(arpSpoof, self).__init__(core)
         self.name = "Arp Spoof"
         self.options = {
-            "masq" : Option("masq", "", "ID of the computer to masquerade as", True),
-            "source": Option("source", "", "ID of the source computer", True),
-            "dest": Option("dest", "", "ID of the target", True),
+            "masq" : Option("masq", "", "Mac Address of the computer to masquerade as", True),
+            "source": Option("source", "", "Mac Address of the source computer", True),
+            "dest": Option("dest", "", "Mac Address of the target", True),
             }
         self.help_text = INFO + "Spoof the arp table of a target with our ip. By forwarding their traffic, we can see all their traffic."
 

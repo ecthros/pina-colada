@@ -4,6 +4,11 @@ import sys
 from option import *
 from colorama import *
 
+GOOD = Fore.GREEN + " + " + Fore.RESET
+BAD = Fore.RED + " - " + Fore.RESET
+WARN = Fore.YELLOW + " * " + Fore.RESET
+INFO = Fore.BLUE + " + " + Fore.RESET
+
 class Capability(object):
     def __init__(self, core):
         self.options = {}
@@ -34,9 +39,5 @@ class Capability(object):
             return None
     
     def get_options(self):
-        return options
-    
-    def set_target(target):
-        self.options['target'] = target
-
+        return self.options
 

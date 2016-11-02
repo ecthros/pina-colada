@@ -24,7 +24,7 @@ class PinaColadaCLI(cmd.Cmd):
         self.ctrlc = False
         self.ascii_art()
         print "Welcome to Pina Colada, a powerful Wifi Pineapple. Type \"help\" to see the list of available commands."
-   
+        print "Defaulting to interface %s (%s)." % (self.core.default_iface, self.core.get_local_ip(self.core.default_iface))
     def ascii_art(self):
         print "    ____  _  /\//          ______      __          __        ' ."    
         print "   / __ \(_)//\/ ____ _   / ____/___  / /___ _____/ /___ _   \~~~/"
@@ -98,12 +98,15 @@ class PinaColadaCLI(cmd.Cmd):
         self._hist    = []      ## No history yet
         self._locals  = {}      ## Initialize execution namespace for user
         self._globals = {}
+
     def do_history(self, args):
         print self._hist
+
     def do_exit(self, args):
         self.quit()
+
     def precmd(self, line):
-        self._hist += [ line.strip() ]
+        self._hist += [line.strip()]
         self.ctrlc = False
         return line
         
@@ -126,7 +129,7 @@ class PinaColadaCLI(cmd.Cmd):
                 print("")
                 self.quit()            
     
-    def do_EOF(self, line):
+    def do_EOF(self, _):
         quit()
         return
     
@@ -140,6 +143,7 @@ class PinaColadaCLI(cmd.Cmd):
         exit()
         return
 
+
 def main():
     PinaColadaCLI().cmdloop()
 
@@ -149,8 +153,3 @@ if __name__ == "__main__":
         print BAD + "Please run me as root!"
         sys.exit()
     main()
-
-
-#    start_sniffing()
-    #init_scan()
-   # time.sleep(3600)

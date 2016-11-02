@@ -8,7 +8,6 @@ import zlib
 import json
 import traceback
 import core
-import subprocess
 import pexpect
 import re
 
