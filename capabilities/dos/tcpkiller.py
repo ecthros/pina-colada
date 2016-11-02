@@ -79,9 +79,10 @@ class TCPKiller(Capability):
     def __init__(self, core):
         super(TCPKiller, self).__init__(core)
         self.name = "TCPKiller"
+        self.core = core
         self.options = {
             "interface":                Option("interface", "eth0", "interface to act upon", True),
-            "allow":                    Option("allow", False, "do not attack this ip address's connections, whether it's the source or destination of a packet", False),
+            "allow":                    Option("allow", self.core.localIP, "do not attack this ip address's connections, whether it's the source or destination of a packet", False),
             "allow_source":             Option("allow-source", False, "do not attack this ip address's connections, but only if it's the source of a packet", False),
             "allow_destination":        Option("destination-source", False, "do not attack this ip address's connections, but only if it's the destination of a packet", False),
             "target":                   Option("target", "0.0.0.0", "actively target given ip address, whether it is the source or destination of a packet", False),
