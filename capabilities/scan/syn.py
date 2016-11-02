@@ -39,7 +39,6 @@ class syn(Capability):
 
         return rep
 
-
     def launch(self):
         self.syn_scan(self.get_value("target"), (int(self.get_value("start")), int(self.get_value("end"))))
 

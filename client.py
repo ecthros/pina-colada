@@ -54,6 +54,7 @@ save_seps = lambda m: m.replace(SEP, "|::|").replace(END_SEP, "!::!")
 def get_date():
     return "%02d:%02d:%02d" % (datetime.now().hour, datetime.now().minute, datetime.now().second)
 
+
 class PinaColadaSocket(object):
     def __init__(self, name, target_port, server_ip):
         self.port = target_port

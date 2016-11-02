@@ -25,6 +25,7 @@ class PinaColadaCLI(cmd.Cmd):
         self.ascii_art()
         print "Welcome to Pina Colada, a powerful Wifi Pineapple. Type \"help\" to see the list of available commands."
         print "Defaulting to interface %s (%s)." % (self.core.default_iface, self.core.get_local_ip(self.core.default_iface))
+
     def ascii_art(self):
         print "    ____  _  /\//          ______      __          __        ' ."    
         print "   / __ \(_)//\/ ____ _   / ____/___  / /___ _____/ /___ _   \~~~/"
