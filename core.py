@@ -34,9 +34,17 @@ class PinaColada(object):
         interfaces = ni.interfaces()
         available = []
         for iface in interfaces:
-            if ni.AF_INET in ni.ifaddresses(iface) and "lo0" not in iface:
+            if ni.AF_INET in ni.ifaddresses(iface) and "lo0" != iface:
                 available.append(iface)
         return available
+
+    def set_interface(self, iface):
+        if iface in ni.interfaces() and ni.AF_INET in ni.ifaddresses(iface):
+            self.default_iface = iface
+            self.localIP = self.get_local_ip(self.default_iface)
+            return True
+        else:
+            return None
 
     def get_local_ip(self, iface):
         addrs = ni.ifaddresses(iface)

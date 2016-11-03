@@ -62,6 +62,14 @@ class PinaColadaCLI(cmd.Cmd):
         for computer in self.core.network.cur.fetchall():
             print str(computer[0]) + "\t" + str(computer[1]) + "\t" + str(computer[2]) + "\t" + str(computer[3]) + "\t" + str(computer[4])
             
+    def do_interface(self, args):
+        if not args:
+            print "Available interfaces: %s" % ", ".join(self.core.get_available_interfaces())
+            return
+        if self.core.set_interface(args):
+            print GOOD + "Successfully changed interface to %s. Using local IP %s." % (args, self.core.localIP)
+        else:
+            print BAD + "Could not use interface %s. (Is it enabled, and have an IP address?)" % (args)
 
     def complete_use(self, text, line, begin_index, end_index):
         line = line.rsplit(" ")[1]
