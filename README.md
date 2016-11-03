@@ -42,9 +42,16 @@ To see a full list of available capabilities, run "list":
    - syn
    - tcpkiller
   + arp
-   - arpBegin
    - arpDos
    - arpSpoof
+  + sniff
+   - sniffPack
+  + exploitation
+   - dnsSpoof
+   - ms08
+  + scan
+   - nmapScan
+   - syn
    ...
 >>
 ```
