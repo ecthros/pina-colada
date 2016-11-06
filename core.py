@@ -29,6 +29,7 @@ class PinaColada(object):
         self.cur = self.network.cur
         self.categories = None
         self.loaded_capabilities = {}
+        self.cnc = self.localIP  # TODO
 
     def get_available_interfaces(self):
         interfaces = ni.interfaces()
@@ -74,7 +75,7 @@ class PinaColada(object):
                     if echo:
                         print (len(path)*'  ') + "-", str(file).replace(".py", "")
         return bds
-    
+
     def reload(self):
         pass
 

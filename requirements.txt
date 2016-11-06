@@ -1,5 +1,0 @@
-netifaces
-scapy
-netaddr
-pexpect
-colorama
