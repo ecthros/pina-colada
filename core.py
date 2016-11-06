@@ -70,7 +70,7 @@ class PinaColada(object):
             del dirs[:] # walk down only one level
             path = root.split('/')
             for file in files:
-                if file[-3:] == ".py" and file != "__init__.py":
+                if file[-3:] == ".py" and file != "__init__.py" and not file.startswith("util_"):
                     bds.append(str(file).replace(".py", ""))
                     if echo:
                         print (len(path)*'  ') + "-", str(file).replace(".py", "")
@@ -100,7 +100,7 @@ class PinaColada(object):
     def instantiate(self, args):
         try:
             bd = args.split()[0]
-            loc, bd =  bd.rsplit("/", 1)
+            loc, bd = bd.rsplit("/", 1)
             if "capabilities/" + loc not in sys.path: 
                 sys.path.insert(0, "capabilities/" + loc)
             if bd not in self.loaded_capabilities:
@@ -112,6 +112,6 @@ class PinaColada(object):
             else:
                 return self.loaded_capabilities[bd]
         except Exception as e:
-            print e
-            traceback.print_exc()
+            #print e
+            #traceback.print_exc()
             return None

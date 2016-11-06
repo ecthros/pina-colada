@@ -52,7 +52,7 @@ class PinaColadaCLI(cmd.Cmd):
     def do_use(self, args):
         cap = self.core.instantiate(args)
         if cap is None:
-            print(BAD + "An unexpected error occured.")
+            print(BAD + "This module could not be loaded, or an unexpected error occurred.")
             return
         cli = CapabilityInterface(self, cap).cmdloop()
 
@@ -74,8 +74,10 @@ class PinaColadaCLI(cmd.Cmd):
     def do_promisc(self, args):
         if args == "enable":
             self.core.promisc()
+            print GOOD + "Promiscuous mode enabled for interface %s." % self.core.default_iface
         elif args == "disable":
             self.core.promisc(enable=False)
+            print GOOD + "Promiscuous mode disabled for interface %s." % self.core.default_iface
         else:
             print BAD + "Unknown option %s. Usage: promisc <enable|disable>" % args
 

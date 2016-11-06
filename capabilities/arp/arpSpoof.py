@@ -1,4 +1,4 @@
-from arpBegin import *
+from util_arp import *
 import os
 from capability import *
 
@@ -14,6 +14,7 @@ from capability import *
 #set source_mac "b8:27:eb:c2:1c:52"
 #set dest_ip "10.0.0.57"
 #set dest_mac "00:0c:29:08:45:1a"
+
 class arpSpoof(Capability):
 
     def __init__(self, core):

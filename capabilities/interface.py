@@ -35,7 +35,7 @@ class CapabilityInterface(cmd.Cmd):
         return False
 
     def do_restore(self, args):
-        print GOOD + "Restoring target"
+        print GOOD + "Restoring target..."
         self.capability.restore()
         return False
 
@@ -67,26 +67,37 @@ class CapabilityInterface(cmd.Cmd):
             return self.options[name].value
         else:
             return None
+
     def check_by_name(self, name):
         for mod in self.modules:
             if name.lower() == mod.name.lower():
                 return True
         return False
+
     def do_EOF(self, line):
         print ""
         return True
+
     def emptyline(self):
         return
+
     def precmd(self, line):
         self._hist += [ line.strip() ]
-        return line 
+        return line
+
     def do_history(self, args):
         print self._hist
-    def default(self, line): 
-        self.core.onecmd(line)
+
+    def do_exit(self, args):
+        return True
+
     def do_quit(self, args):
-        print "Exiting"
-        exit()
+        return True
+
+    def default(self, line):
+        print "passing to core"
+        self.core.onecmd(line)
+
     def print_help(self, options):
         if options == {}:
             return

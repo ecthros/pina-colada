@@ -28,11 +28,11 @@ class Syn(Capability):
         self.threads = []
         print "Type 'restore' when ready to stop the attack.'"
         for i in range(1, int(self.get_value("threads"))+1):
-            print "Beginning thread" + str(i)
+            #print "Beginning thread" + str(i)
             self.threads.append(multiprocessing.Process(target=self.flood, args=()))
             self.threads[i-1].start()
 
     def restore(self):
         for i in range(1, int(self.get_value("threads"))+1):
             self.threads[i-1].terminate()
-            print "Terminating thread " + str(i)
+            #print "Terminating thread " + str(i)
