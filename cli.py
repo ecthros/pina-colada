@@ -71,6 +71,15 @@ class PinaColadaCLI(cmd.Cmd):
         else:
             print BAD + "Could not use interface %s. (Is it enabled, and have an IP address?)" % (args)
 
+    def do_promisc(self, args):
+        if args == "enable":
+            self.core.promisc()
+        elif args == "disable":
+            self.core.promisc(enable=False)
+        else:
+            print BAD + "Unknown option %s. Usage: promisc <enable|disable>" % args
+
+
     def complete_use(self, text, line, begin_index, end_index):
         line = line.rsplit(" ")[1]
         segment = line.split("/")

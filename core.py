@@ -79,6 +79,12 @@ class PinaColada(object):
     def reload(self):
         pass
 
+    def promisc(self, enable=True):
+        if enable:
+            os.system("ifconfig %s promisc" % self.default_iface)
+        else:
+            os.system("ifconfig %s -promisc" % self.default_iface)
+
     def get_categories(self):
         return ["auxiliary", "dos", "arp", "enumeration", "sniff", "exploitation", "scan"]
 
