@@ -91,6 +91,7 @@ class PinaColada(object):
         return ["auxiliary", "dos", "arp", "enumeration", "sniff", "exploitation", "scan"]
 
     def beacon(pkt):
+        ap_list = []
         if pkt.haslayer(Dot11):
             if pkt.type == 0 and pkt.subtype == 8:
                 if pkt.addr2 not in ap_list:
@@ -98,8 +99,8 @@ class PinaColada(object):
                     print "AP MAC: %s with SSID: %s " % (pkt.addr2, pkt.info)
 
     def get_wifis(self):
-        ap_list = []
-        sniff(iface="mon0", prn=self.beacon)
+        print GOOD + "Sniffing for Wifi Beacons, output for newly disovered ones are below. Hit Ctrl-C when done."
+        sniff(iface=self.default_iface, prn=self.beacon)
 
     def get_capabilities(self, category=None):
         caps = []
