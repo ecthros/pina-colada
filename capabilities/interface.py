@@ -95,7 +95,6 @@ class CapabilityInterface(cmd.Cmd):
         return True
 
     def default(self, line):
-        print "passing to core"
         self.core.onecmd(line)
 
     def print_help(self, options):
