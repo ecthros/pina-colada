@@ -31,6 +31,12 @@ Piña Colada has a number of commands that enable to you to control different as
 + Promiscuous Mode enabled for interface eth0.
 ```
 
+**Controlling operating interface:**
+```
+>> interface eth0
+ + Successfully changed interface to eth0. Using local IP 10.0.0.56.
+```
+
 **Enumerating the Network:**
 ```
 >> discover
