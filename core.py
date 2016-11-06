@@ -14,8 +14,9 @@ logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 import network
 import traceback
 
+from pythonwifi.iwlibs import Wireless
 from capabilities import *
-from scapy import *
+from scapy.all import *
 import network
 sys.path.append("capabilities")
 
@@ -52,6 +53,7 @@ class PinaColada(object):
         ipinfo = addrs[socket.AF_INET][0]
         return ipinfo['addr']
 
+
     def get_local_mac(self, iface):
         return ni.ifaddresses(iface)[ni.AF_LINK][0]['addr']
 
@@ -87,6 +89,17 @@ class PinaColada(object):
 
     def get_categories(self):
         return ["auxiliary", "dos", "arp", "enumeration", "sniff", "exploitation", "scan"]
+
+    def beacon(pkt):
+        if pkt.haslayer(Dot11):
+            if pkt.type == 0 and pkt.subtype == 8:
+                if pkt.addr2 not in ap_list:
+                    ap_list.append(pkt.addr2)
+                    print "AP MAC: %s with SSID: %s " % (pkt.addr2, pkt.info)
+
+    def get_wifis(self):
+        ap_list = []
+        sniff(iface="mon0", prn=self.beacon)
 
     def get_capabilities(self, category=None):
         caps = []

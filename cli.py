@@ -56,6 +56,9 @@ class PinaColadaCLI(cmd.Cmd):
             return
         cli = CapabilityInterface(self, cap).cmdloop()
 
+    def do_wifi(self, args):
+        self.core.get_wifis()
+
     def do_network(self, args):
         self.core.network.cur.execute("Select * from computers ORDER BY ip ASC")
         print "ID\tIP\t\tMAC\t\t\tPorts\tLast Date"
