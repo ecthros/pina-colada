@@ -90,7 +90,7 @@ class PinaColada(object):
     def get_categories(self):
         return ["auxiliary", "dos", "arp", "enumeration", "sniff", "exploitation", "scan"]
 
-    def beacon(pkt):
+    def beacon(self, pkt):
         ap_list = []
         if pkt.haslayer(Dot11):
             if pkt.type == 0 and pkt.subtype == 8:
