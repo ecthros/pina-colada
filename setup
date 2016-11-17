@@ -1,13 +1,16 @@
 apt-get update
 apt-get install -y git-core
 apt-get install -y postgresql
+apt-get install -y python-dev
 sudo service postgresql start
-su postgres -c psql -c "create user aces with password 'aces';"
-su postgres -c createdb network
+su -c "psql -c \"create user aces with password 'aces';\"" postgres
+su -c "createdb network" postgres
 sudo apt-get install -y python-netaddr
 sudo apt-get install -y build-essential python-dev libnetfilter-queue-dev
 git clone https://github.com/fqrouter/python-netfilterqueue.git
-python python-netfilterqueue/setup.py install
+cd python-netfilterqueue
+python setup.py install
+cd ..
 apt install -y python-nmap
 apt-get install -y python-pip
 pip install --upgrade pip
@@ -19,7 +22,7 @@ pip install colorama
 pip install wifi
 pip install psycopg2
 python setup_postgres.py
-https://pypi.python.org/packages/bc/ab/c49f97516f78c2b0cacb4f45873abc4ca9872942a9c4c19ded8052c8edda/python-wifi-0.6.1.tar.bz2
+wget https://pypi.python.org/packages/bc/ab/c49f97516f78c2b0cacb4f45873abc4ca9872942a9c4c19ded8052c8edda/python-wifi-0.6.1.tar.bz2
 tar -xvf python-wifi-0.6.1.tar.bz2
 cd python-wifi-0.6.1/
 python setup.py install
