@@ -1,7 +1,5 @@
 apt-get update
 apt-get install -y git-core
-git clone https://github.com/ecthros/pina-colada
-cd pina-colada/
 apt-get install -y postgresql
 sudo service postgresql start
 su postgres -c psql -c "create user aces with password 'aces';"
