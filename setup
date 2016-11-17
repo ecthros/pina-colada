@@ -1,19 +1,17 @@
 apt-get update
-apt-get install git-core
+apt-get install -y git-core
 git clone https://github.com/ecthros/pina-colada
 cd pina-colada/
-apt-get install postgresql-9.4
+apt-get install -y postgresql
 sudo service postgresql start
 su postgres -c psql -c "create user aces with password 'aces';"
 su postgres -c createdb network
-python setup_postgres.py
-sudo apt install python-netaddr
-yes | sudo apt-get install build-essential python-dev libnetfilter-queue-dev
+sudo apt-get install -y python-netaddr
+sudo apt-get install -y build-essential python-dev libnetfilter-queue-dev
 git clone https://github.com/fqrouter/python-netfilterqueue.git
-cd python-netfilterqueue
-python setup.py install
-cd ..
-apt install python-nmap
+python python-netfilterqueue/setup.py install
+apt install -y python-nmap
+apt-get install -y python-pip
 pip install --upgrade pip
 pip install netifaces
 pip install scapy
@@ -21,6 +19,8 @@ pip install netaddr
 pip install pexpect
 pip install colorama
 pip install wifi
+pip install psycopg2
+python setup_postgres.py
 https://pypi.python.org/packages/bc/ab/c49f97516f78c2b0cacb4f45873abc4ca9872942a9c4c19ded8052c8edda/python-wifi-0.6.1.tar.bz2
 tar -xvf python-wifi-0.6.1.tar.bz2
 cd python-wifi-0.6.1/
