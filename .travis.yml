@@ -3,5 +3,5 @@ sudo: required
 python:
      - "2.7"
 install:
-     - ./setup
+     - sudo ./setup
 script: nosetests -vv --nocapture 
