@@ -45,9 +45,10 @@ CLI_INIT = 10
 CLI = 11
 CLI_RESP = 12
 
-BS = 16
+BS = AES.block_size
+print BS
 pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
-unpad = lambda s : s[0:-ord(s[-1])]
+unpad = lambda s: s[:-ord(s[len(s)-1:])]
 
 replace_seps = lambda m: m.replace("|::|", SEP).replace("!::!", END_SEP)
 save_seps = lambda m: m.replace(SEP, "|::|").replace(END_SEP, "!::!")
@@ -62,10 +63,7 @@ class PinaColadaSocket(object):
         self.ip = server_ip
         self.name = name
         self.socket = None
-        self.core = core.PinaColada()
         self.keys = {}
-        self.conn = None
-        self.cli = None
         print "[*] Attempting to connect to server"
 
     def connect(self):
@@ -83,12 +81,14 @@ class PinaColadaSocket(object):
             client.send("%ld" % b)
             self.keys[client] = pad("%ld" % ((a ** client_secret) % shared_prime))
             client.settimeout(None)  # Remove the timeout
-            self.send(MSG, "0", "PinaColada")
+            self.send(MSG, "Client1")
             print("[*] Successfully connected.")
-            self.receive(client)
-
-
-
+            receive_loop = threading.Thread(target=self.receive, args=(client,))
+            receive_loop.start()
+            self.send(CLI_INIT, "cli init")
+            while True:
+                line = raw_input(">> ")
+                self.send(CLI, line)
 
         except Exception as e:
             print e
@@ -106,39 +106,9 @@ class PinaColadaSocket(object):
     #
     ####################################################################
 
-    def get(self, request):
-        reqs = request.split()
-        if request == "help":
-            return "help message"  # TODO
-        if request == "categories":
-            return self.core.get_categories()
-        if "capabilities" in request:
-            return self.core.get_capabilities(category=reqs[1])  # TODO POTENTIAL BUG
-        if request == "ip":
-            return self.core.get_local_ip(self.core.default_iface)  # TODO ADD INTERFACES
-        if request == "list":
-            info = {}
-            for cat in self.core.get_categories():
-                caps = self.core.get_capabilities(cat)
-                if caps != []:
-                    info[cat] = []
-                for cap in caps:
-                    info[cat].append(cap)
-            return info
-
-    def cli_init(self):
-        self.cli = pexpect.spawn("sudo python cli.py")
-        self.cli.expect(re.escape(prompt))
-        return self.cli.before + prompt
-
-    def cli_communicate(self, data):
-        self.cli.sendline(data)
-        self.cli.expect(re.escape(prompt))
-        return self.cli.before + prompt
-
-    def send(self, message_type, requester, data):
+    def send(self, message_type, data):
         #print "SENDING: <%d, %s>" %(message_type, data)
-        self.socket.send(self.encrypt(self.pack_data(message_type, requester, data), self.socket))
+        self.socket.send(self.encrypt(self.pack_data(message_type, self.name, data), self.socket))
 
     def encrypt(self, string, sock):
         iv = Random.new().read(AES.block_size)
@@ -161,17 +131,15 @@ class PinaColadaSocket(object):
         return str(message_type) + SEP + save_seps(name) + SEP + save_seps(data) + END_SEP
 
     def print_msg(self, message):
-       print message
+        print message
 
     def handle(self, data):
-        message_type, name, d = self.unpack_data(data)
-        print "DATA FOR CLI: %s" % d
+        message_type, name, data = self.unpack_data(data)
         message_type = int(message_type)
-        print message_type, name, d
         if message_type == CLI_INIT:
-            self.send(CLI_RESP, name, self.cli_init())
+            self.send(CLI_RESP, self.cli_init())
         if message_type == CLI:
-            self.send(CLI_RESP, name, self.cli_communicate(d))
+            self.send(CLI_RESP, self.cli_communicate(data))
         self.print_msg(data)
     ####################################################################
     #
@@ -195,7 +163,4 @@ class PinaColadaSocket(object):
             self.shutdown()
 
 if __name__ == "__main__":
-    if os.getuid() != 0:
-        print BAD + "Please run me as root!"
-        sys.exit()
     PinaColadaSocket("Client", SERVER_PORT, SERVER_IP).connect()

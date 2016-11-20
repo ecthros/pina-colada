@@ -9,7 +9,9 @@ import inspect
 import sys
 import zlib
 import core
+import multiprocessing
 
+from pinacolada_website import app
 from Crypto.Cipher import AES
 from Crypto import Random
 from Crypto.Util import number
@@ -17,9 +19,9 @@ from datetime import datetime
 
 VERBOSE = True
 
-BS = AES.block_size
+BS = 16
 pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
-unpad = lambda s: s[0:-ord(s[-1])]
+unpad = lambda s : s[0:-ord(s[-1])]
 
 SEP = "|:|"
 END_SEP = "!:!"
@@ -31,6 +33,7 @@ INFO = 3
 REQ = 4
 RELOAD = 5
 
+TUNNEL_INIT = 20
 
 CLI_INIT = 10
 CLI = 11
@@ -40,13 +43,12 @@ CLI_RESP = 12
 def get_date():
     return "%02d:%02d:%02d" % (datetime.now().hour, datetime.now().minute, datetime.now().second)
 
-class SampleServer():
+class Server():
 
     def __init__(self, name, port):
         self.name = name
         self.port = port
-        self.handlers = {}
-        self.client_handlers = {}
+        self.pi = None
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
         self.core = core.PinaColada()
@@ -56,8 +58,8 @@ class SampleServer():
         self.threads = {}
         self.ips = {}
         self.ids = {}
-        self.blocks = []
         self.keys = {}
+        self.tunnels = {}
 
     #################################################################
     #
@@ -120,6 +122,11 @@ class SampleServer():
             print("(%s)" % name)
             self.ids[id] = name
             self.clients[id] = c
+            if name == "PinaColada":
+                self.pi = c
+                print "[*] Pina Colada has connected."
+            else:
+                self.tunnels[id] = c
 
         except Exception as e:
             self.print_exc(e, "\n[!] Failed to initialize client connection for %d." % id, always=True)
@@ -138,8 +145,22 @@ class SampleServer():
             print("[!] Connection closed from client %d (%s) - %s" % (id, self.ids[id], self.ips[id]))
             self.close(id)
 
+    def send_to_pi(self, message_type, name, message):
+        if self.pi is None:
+            return None
+        self.direct(message_type, name, self.pi, message)
+
     def inbound(self, d, c):
         message_type, name, data = self.unpack_data(d)
+        if c is not self.pi:
+            if message_type == CLI_INIT:
+                self.send_to_pi(CLI_INIT, self.get_id(c), "cli init")
+            elif message_type == CLI:
+                self.send_to_pi(CLI, self.get_id(c), data)  # Pass through data d to pi
+        else:  # The pi has responded; forward traffic along
+            self.direct(CLI_RESP, "0", self.tunnels[int(name)], data)
+
+
         print("%s : %s (%d|%s): %s" % (get_date(), name, self.get_id(c), message_type, data))
 
     def get_id(self, c):
@@ -160,7 +181,7 @@ class SampleServer():
     #
     #################################################################
 
-    def cmdloop(self, cmd):
+    def cmdloop(self, cmd):  # TODO
         key = cmd.split()[0]
         for id in self.clients:
             self.direct(CLI_INIT, self.clients[id], "cli init")
@@ -194,9 +215,6 @@ class SampleServer():
         finally:
             try:
                 self.clients[id].close()
-            except:
-                pass
-            try:
                 self.clients.pop(id)
                 self.ids.pop(id)
             except:
@@ -222,8 +240,8 @@ class SampleServer():
         cipher = AES.new(self.keys[c], AES.MODE_CBC, enc[:16])
         return zlib.decompress(unpad(cipher.decrypt(enc[16:])))
 
-    def direct(self, msg_type, c, msg):
-        c.send(self.encrypt(self.pack_data(msg_type, "SERVER", msg), c))
+    def direct(self, msg_type, requester, c, msg):
+        c.send(self.encrypt(self.pack_data(msg_type, requester, msg), c))
 
     def unpack_data(self, msg):
         msgs = [self.replace_seps(s) for s in msg.split(SEP)]
@@ -233,7 +251,7 @@ class SampleServer():
             return msgs
 
     def pack_data(self, type, name, data):
-        return (str(type) + SEP + self.save_seps(name) + SEP + self.save_seps(data) + END_SEP)
+        return str(type) + SEP + self.save_seps(name) + SEP + self.save_seps(data) + END_SEP
 
     def replace_seps(self, message):
         return str(message).replace("|::|", SEP).replace("!::!", END_SEP)
@@ -248,12 +266,19 @@ class SampleServer():
             print e
             traceback.print_exc()
 
+
+def start_server():
+    print "Starting web sever..."
+    app.run(debug=True)
+
 sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)  # force a flushed output for all prints
 if __name__ == "__main__":
+    web_server = multiprocessing.Process(target=start_server)
+    #web_server.start()
     threads = {}
     servers = {}
     
-    servers["PinaColada"] = SampleServer("PinaColada", 9999)
+    servers["PinaColada"] = Server("PinaColada", 9999)
     for c in servers:
         threads[c] = threading.Thread(target=servers[c].server)
         threads[c].start()
@@ -278,4 +303,5 @@ if __name__ == "__main__":
         for c in servers:
             servers[c].shutdown()
             threads[c].join()
+        web_server.join()
         os._exit(0)

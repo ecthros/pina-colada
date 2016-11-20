@@ -36,7 +36,7 @@ class PinaColada(object):
         interfaces = ni.interfaces()
         available = []
         for iface in interfaces:
-            if ni.AF_INET in ni.ifaddresses(iface) and "lo0" != iface:
+            if ni.AF_INET in ni.ifaddresses(iface) and "lo" not in iface:
                 available.append(iface)
         return available
 
