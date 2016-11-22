@@ -1,6 +1,4 @@
 apt-get update
-apt-get install -y python-flask
-apt-get install -y python-pip
 apt-get install -y git-core
 apt-get install -y postgresql
 apt-get install -y python-dev
@@ -15,12 +13,6 @@ python setup.py install
 cd ..
 apt install -y python-nmap
 pip install --upgrade pip
-pip install scapy
-pip install netaddr
-pip install pexpect
-pip install wifi
-apt-get install -y python-netifaces
-pip install colorama
 apt-get install -y python-psycopg2
 apt-get install -y python-tk
 python setup_postgres.py
