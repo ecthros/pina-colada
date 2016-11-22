@@ -20,7 +20,9 @@ pip install netaddr
 pip install pexpect
 pip install wifi
 apt-get install -y python-netifaces
-apt-get install -y python-colorama
+pip install colorama
+pip install flask
+pip install netifaces
 apt-get install -y python-psycopg2
 apt-get install -y python-tk
 python setup_postgres.py
