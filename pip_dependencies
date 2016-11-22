@@ -5,4 +5,5 @@ scapy
 netaddr
 pexpect
 wifi
+python-wifi
 psycopg2
