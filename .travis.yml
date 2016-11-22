@@ -4,5 +4,6 @@ dist: xenial
 python:
      - "2.7"
 install:
+     - pip install -r pip_dependencies
      - sudo -H ./setup
 script: nosetests -vv --nocapture 
