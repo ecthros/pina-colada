@@ -13,7 +13,6 @@ python setup.py install
 cd ..
 apt install -y python-nmap
 pip install --upgrade pip
-apt-get install -y python-psycopg2
 apt-get install -y python-tk
 python setup_postgres.py
 wget https://pypi.python.org/packages/bc/ab/c49f97516f78c2b0cacb4f45873abc4ca9872942a9c4c19ded8052c8edda/python-wifi-0.6.1.tar.bz2

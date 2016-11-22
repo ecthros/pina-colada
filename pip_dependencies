@@ -5,3 +5,4 @@ scapy
 netaddr
 pexpect
 wifi
+psycopg2
