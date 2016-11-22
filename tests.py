@@ -1,2 +1,4 @@
+import os
+
 def base_test():
-    pass
+    os.system("python cli.py")
