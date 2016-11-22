@@ -1,8 +1,6 @@
 apt-get update
 apt-get install -y python-flask
 apt-get install -y python-pip
-pip install flask
-pip install netifaces
 apt-get install -y git-core
 apt-get install -y postgresql
 apt-get install -y python-dev
