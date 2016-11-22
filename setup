@@ -1,8 +1,11 @@
 apt-get update
+apt-get install -y python-flask
+apt-get install -y python-pip
+pip install flask
+pip install netifaces
 apt-get install -y git-core
 apt-get install -y postgresql
 apt-get install -y python-dev
-apt-get install -y python-flask
 sudo service postgresql start
 su -c "psql -c \"create user aces with password 'aces';\"" postgres
 su -c "createdb network" postgres
@@ -13,7 +16,6 @@ cd python-netfilterqueue
 python setup.py install
 cd ..
 apt install -y python-nmap
-apt-get install -y python-pip
 pip install --upgrade pip
 pip install scapy
 pip install netaddr
@@ -21,8 +23,6 @@ pip install pexpect
 pip install wifi
 apt-get install -y python-netifaces
 pip install colorama
-pip install flask
-pip install netifaces
 apt-get install -y python-psycopg2
 apt-get install -y python-tk
 python setup_postgres.py
