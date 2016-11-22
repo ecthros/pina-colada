@@ -17,7 +17,7 @@ import traceback
 from pythonwifi.iwlibs import Wireless
 from capabilities import *
 from scapy.all import *
-import network
+from network import *
 sys.path.append("capabilities")
 
 class PinaColada(object):
@@ -99,8 +99,10 @@ class PinaColada(object):
                     print "AP MAC: %s with SSID: %s " % (pkt.addr2, pkt.info)
 
     def get_wifis(self):
-        print GOOD + "Sniffing for Wifi Beacons, output for newly disovered ones are below. Hit Ctrl-C when done."
-        sniff(iface=self.default_iface, prn=self.beacon)
+        print GOOD + "Sniffing for Wifi Beacons"
+        for network in wifi_scan():
+            print network
+
 
     def get_capabilities(self, category=None):
         caps = []
