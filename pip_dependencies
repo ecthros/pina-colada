@@ -8,3 +8,4 @@ wifi
 python-wifi
 psycopg2
 pycrypto
+nose

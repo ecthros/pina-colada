@@ -7,5 +7,4 @@ install:
      - pip install -r pip_dependencies
      - sudo pip install -r pip_dependencies
      - sudo -H ./setup
-     - sudo apt install nosetests
 script: sudo nosetests -vv --nocapture 
