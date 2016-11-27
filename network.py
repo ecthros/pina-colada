@@ -5,6 +5,27 @@ import time
 import datetime
 
 
+#Scan all networks in wifi range and return an array of all of them.
+def wifi_scan():
+    proc = subprocess.Popen(["iwlist wlan0 scan | grep ESSID | sort | uniq | awk -F \"\\\"\" \'{print $2}\'"], stdout=subprocess.PIPE, shell=True)
+    networks = proc.stdout.read()[:-1].split('\n')
+    networks2 = []
+    for item in networks:
+        valid = False
+        for char in item:
+            if char != '\\' and char != '0' and char != 'x':
+                valid = True
+            else:
+                if valid == True:
+                    valid = True
+                else:
+                    valid = False
+        if item == "" or valid == False:
+            networks2.append("Hidden Network")
+        else:
+            networks2.append(item)
+    return networks2
+
 #All other computers should be in an array of type computer, having (so far) an ip and a MAC address.
 class Computer(object):
     def __init__(self, ip, mac):
