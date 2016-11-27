@@ -1,2 +1,2 @@
-from pinacolada_website import app
+from web import app
 app.run(debug=True)

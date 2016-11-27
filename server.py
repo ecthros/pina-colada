@@ -68,6 +68,8 @@ class Server():
     #################################################################
 
     def server(self):
+    	print "STARTING SERVER\n"
+    	print self.name
         try:
             try:
                 self.socket.bind(("0.0.0.0", self.port))
@@ -269,12 +271,13 @@ class Server():
 
 def start_server():
     print "Starting web sever..."
+    #app.config["server"]
     app.run(debug=True)
 
 sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)  # force a flushed output for all prints
 if __name__ == "__main__":
     web_server = multiprocessing.Process(target=start_server)
-    #web_server.start()
+    web_server.start()
     threads = {}
     servers = {}
     
