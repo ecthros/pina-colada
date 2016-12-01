@@ -1,0 +1,35 @@
+<html>
+<head>
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/0.11.18/js/jquery.terminal.min.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/0.11.18/css/jquery.terminal.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="pinacolada_cli">
+<script>
+    $('#pinacolada_cli').terminal(function(command, term) {
+            console.log(command);
+        $.ajax({
+            type: "POST",
+            url : '/command/',
+            data : {
+                'command' : command
+            },
+            success : function(data) {              
+                alert(data);
+            },
+        });}
+        , {
+        greetings: 'PinaColada',
+        name: 'PinaColada CLI',
+        height: 200,
+        prompt: 'PinaColada >> '
+    });
+</script>
+</div>
+</body>
+</html>

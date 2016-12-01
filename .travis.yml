@@ -1,7 +1,10 @@
 language: python
 sudo: required
+dist: xenial
 python:
      - "2.7"
 install:
-     - sudo ./setup
-script: nosetests -vv --nocapture 
+     - pip install -r pip_dependencies
+     - sudo pip install -r pip_dependencies
+     - sudo -H ./setup
+script: sudo nosetests -vv --nocapture 

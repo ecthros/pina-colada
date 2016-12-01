@@ -1,4 +1,12 @@
+import os
+import pexpect
+from colorama import *
+import re
+
+prompt = Fore.BLUE + ">> " + Fore.RESET
+
 def base_test():
+<<<<<<< HEAD
     pass
 
 def padding_tests():
@@ -11,3 +19,8 @@ def padding_tests():
     print pad("a")
     pass
 padding_tests()
+=======
+    cli = pexpect.spawn("sudo python cli.py")
+    cli.expect(re.escape(prompt))
+
+>>>>>>> 9219848aa75d979a0ca9a6219a9a863455aa8158

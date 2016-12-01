@@ -1,0 +1,11 @@
+flask
+netifaces
+colorama
+scapy
+netaddr
+pexpect
+wifi
+python-wifi
+psycopg2
+pycrypto
+nose
