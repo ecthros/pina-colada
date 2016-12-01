@@ -4,7 +4,6 @@ import sys
 import os
 import base64
 import random
-import zlib
 import json
 import traceback
 import core
@@ -113,12 +112,12 @@ class PinaColadaSocket(object):
     def encrypt(self, string, sock):
         iv = Random.new().read(AES.block_size)
         cipher = AES.new(self.keys[sock], AES.MODE_CBC, iv)
-        return base64.b64encode(iv + cipher.encrypt(pad(zlib.compress(string))))
+        return base64.b64encode(iv + cipher.encrypt(pad(string)))
 
     def decrypt(self, msg, sock):
         enc = base64.b64decode(msg)
         cipher = AES.new(self.keys[sock], AES.MODE_CBC, enc[:16])
-        return zlib.decompress(unpad(cipher.decrypt(enc[16:])))
+        return unpad(cipher.decrypt(enc[16:]))
 
     def unpack_data(self, msg):
         msgs = [replace_seps(s) for s in msg.split(SEP)]

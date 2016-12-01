@@ -7,7 +7,7 @@ import base64
 import importlib
 import inspect
 import sys
-import zlib
+import time
 import core
 import multiprocessing
 
@@ -233,12 +233,12 @@ class Server():
     def encrypt(self, string, c):
         iv = Random.new().read(AES.block_size)
         cipher = AES.new(self.keys[c], AES.MODE_CBC, iv)
-        return base64.b64encode(iv + cipher.encrypt(pad(zlib.compress(string))))
+        return base64.b64encode(iv + cipher.encrypt(pad(string)))
 
     def decrypt(self, msg, c):
         enc = base64.b64decode(msg)
         cipher = AES.new(self.keys[c], AES.MODE_CBC, enc[:16])
-        return zlib.decompress(unpad(cipher.decrypt(enc[16:])))
+        return unpad(cipher.decrypt(enc[16:]))
 
     def direct(self, msg_type, requester, c, msg):
         c.send(self.encrypt(self.pack_data(msg_type, requester, msg), c))
