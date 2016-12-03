@@ -6,7 +6,8 @@ import re
 prompt = Fore.BLUE + ">> " + Fore.RESET
 
 def base_test():
-<<<<<<< HEAD
+    cli = pexpect.spawn("sudo python cli.py")
+    cli.expect(re.escape(prompt))
     pass
 
 def padding_tests():
@@ -18,9 +19,7 @@ def padding_tests():
     print pad("123456789876")
     print pad("a")
     pass
-padding_tests()
-=======
-    cli = pexpect.spawn("sudo python cli.py")
-    cli.expect(re.escape(prompt))
 
->>>>>>> 9219848aa75d979a0ca9a6219a9a863455aa8158
+
+padding_tests()
+

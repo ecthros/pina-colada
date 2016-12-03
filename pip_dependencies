@@ -9,3 +9,5 @@ python-wifi
 psycopg2
 pycrypto
 nose
+flask_cors
+sslstrip
