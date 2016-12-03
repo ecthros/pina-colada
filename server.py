@@ -7,7 +7,7 @@ import base64
 import importlib
 import inspect
 import sys
-import time
+import ssl
 import core
 import multiprocessing
 
@@ -16,6 +16,7 @@ from Crypto.Cipher import AES
 from Crypto import Random
 from Crypto.Util import number
 from datetime import datetime
+
 
 VERBOSE = True
 
@@ -49,11 +50,12 @@ class Server():
         self.name = name
         self.port = port
         self.pi = None
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.bind_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
-        self.core = core.PinaColada()
         self.SERVER_VERSION = 0.5
 
+        self.pi_resp_event = threading.Event()
+        self.pi_resp = ""
         self.clients = {}
         self.threads = {}
         self.ips = {}
@@ -68,25 +70,29 @@ class Server():
     #################################################################
 
     def server(self):
-    	print "STARTING SERVER\n"
-    	print self.name
         try:
             try:
-                self.socket.bind(("0.0.0.0", self.port))
+                self.bind_socket.bind(("0.0.0.0", self.port))
             except socket.error:
                 print("[!] %s startup failed - can't bind to %s:%d" % (self.name, "0.0.0.0", self.port))
                 return
-            self.socket.listen(10000)
+            self.bind_socket.listen(10000)
             sys.stdout.write("[*] %s startup successful - listening on %s:%s\n" % (self.name, "0.0.0.0", self.port))
             sys.stdout.flush()
             while True:
-                client, addr = self.socket.accept()
-                cid = random.randint(0, 99999)
-                self.ips[cid] = addr[0]
-                print("[*] Accepted connection from %s:%d - ID: %d" % (addr[0], addr[1], cid)),
+                try:
+                    client_sock, addr = self.bind_socket.accept()
+                    client = ssl.wrap_socket(client_sock, server_side=True, certfile="cert/server.crt", keyfile="cert/server.key")
 
-                self.threads[cid] = threading.Thread(target=self.handle_client, args=(client, cid))
-                self.threads[cid].start()
+                    cid = random.randint(0, 99999)
+                    self.ips[cid] = addr[0]
+                    print("[*] Accepted connection from %s:%d - ID: %d" % (addr[0], addr[1], cid)),
+
+                    self.threads[cid] = threading.Thread(target=self.handle_client, args=(client, cid))
+                    self.threads[cid].start()
+                except Exception as exc:
+                    client.shutdown(socket.SHUT_RDWR)
+                    client.close()
         except Exception as exc:
             print exc
             self.print_exc(exc, "")
@@ -96,7 +102,7 @@ class Server():
 
     def shutdown(self):
         print("[!] Shutting down %s..." % self.name)
-        self.socket.close()
+        self.bind_socket.close()
         for sock in self.clients:
             self.clients[sock].send("[!] Shutting down server...")
             self.close(sock)
@@ -107,7 +113,7 @@ class Server():
     #
     #################################################################
 
-    def handle_client(self, c, id):
+    def handle_client(self, c, cid):
         try:
             #Diffie-Helmen Exchange
             shared_prime = number.getPrime(10)
@@ -122,17 +128,20 @@ class Server():
             _, name, name = self.unpack_data(self.decrypt(c.recv(1024), c))
             name = name.replace(END_SEP, "").replace(SEP, "")
             print("(%s)" % name)
-            self.ids[id] = name
-            self.clients[id] = c
+            self.ids[cid] = name
+            self.clients[cid] = c
             if name == "PinaColada":
                 self.pi = c
+                app.config["server"] = self
+                print id(app)
+                print self
                 print "[*] Pina Colada has connected."
             else:
-                self.tunnels[id] = c
+                self.tunnels[cid] = c
 
         except Exception as e:
             self.print_exc(e, "\n[!] Failed to initialize client connection for %d." % id, always=True)
-            self.close(id)
+            self.close(cid)
             return False
         try:
             while True:
@@ -144,12 +153,14 @@ class Server():
 
         except Exception as e:
             self.print_exc(e, "")
-            print("[!] Connection closed from client %d (%s) - %s" % (id, self.ids[id], self.ips[id]))
-            self.close(id)
+            print("[!] Connection closed from client %d (%s) - %s" % (cid, self.ids[cid], self.ips[cid]))
+            self.close(cid)
 
     def send_to_pi(self, message_type, name, message):
         if self.pi is None:
+            print "ERROR: Pi is not connected, exiting."
             return None
+        print "Sending %s to %s of type %d" % (message, name, message_type)
         self.direct(message_type, name, self.pi, message)
 
     def inbound(self, d, c):
@@ -160,9 +171,12 @@ class Server():
             elif message_type == CLI:
                 self.send_to_pi(CLI, self.get_id(c), data)  # Pass through data d to pi
         else:  # The pi has responded; forward traffic along
-            self.direct(CLI_RESP, "0", self.tunnels[int(name)], data)
-
-
+            if name == "0":  # data was destined for server, web interface
+                print "Have data for web interface..."
+                self.pi_resp = data
+                self.pi_resp_event.set()
+            else:  # server needs to forward
+                self.direct(CLI_RESP, "0", self.tunnels[int(name)], data)
         print("%s : %s (%d|%s): %s" % (get_date(), name, self.get_id(c), message_type, data))
 
     def get_id(self, c):
@@ -268,24 +282,22 @@ class Server():
             print e
             traceback.print_exc()
 
-
-def start_server():
-    print "Starting web sever..."
-    #app.config["server"]
-    app.run(debug=True)
+    def start_server(self):
+        app.config["server"] = self
+        print "Starting web sever..."
+        app.run()
 
 sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)  # force a flushed output for all prints
 if __name__ == "__main__":
-    web_server = multiprocessing.Process(target=start_server)
-    web_server.start()
+
     threads = {}
     servers = {}
-    
-    servers["PinaColada"] = Server("PinaColada", 9999)
-    for c in servers:
-        threads[c] = threading.Thread(target=servers[c].server)
-        threads[c].start()
     try:
+        main = Server("PinaColada", 9999)
+        thread = threading.Thread(target=main.server)
+        thread.start()
+        main.start_server()
+        '''
         while True:
             sys.stdout.write("Pina Colada >> ")
             cmd = raw_input("")
@@ -296,15 +308,13 @@ if __name__ == "__main__":
             cmds = cmd.split()
 
             servers["PinaColada"].cmdloop(cmd)
-
+        '''
     except KeyboardInterrupt:
         print("[!] Exiting...")
     except Exception as e:
         print e
         servers[0].print_exc(e, "")
     finally:
-        for c in servers:
-            servers[c].shutdown()
-            threads[c].join()
-        web_server.join()
+        main.shutdown()
+        thread.join()
         os._exit(0)
