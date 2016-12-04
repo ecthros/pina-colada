@@ -4,7 +4,7 @@ import sys
 import os
 import base64
 import random
-import json
+import ssl
 import traceback
 import core
 import pexpect
@@ -70,7 +70,9 @@ class PinaColadaSocket(object):
     def connect(self):
         client = None
         try:
-            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            client = ssl.wrap_socket(s, ca_certs="cert/server.crt", cert_reqs=ssl.CERT_REQUIRED)
             client.connect((self.ip, self.port))
             self.socket = client
             shared_prime, shared_base = client.recv(10).split("|")
@@ -126,6 +128,8 @@ class PinaColadaSocket(object):
             return info
 
     def cli_init(self):
+        if self.cli:
+            self.cli.terminate(force=True)
         self.cli = pexpect.spawn("sudo python cli.py")
         self.cli.expect(re.escape(prompt))
         return self.cli.before + prompt
@@ -133,7 +137,7 @@ class PinaColadaSocket(object):
     def cli_communicate(self, data):
         self.cli.sendline(data)
         self.cli.expect(re.escape(prompt))
-        return self.cli.before + prompt
+        return "\n".join(self.cli.before.split("\n")[1:]) + prompt
 
     def send(self, message_type, requester, data):
         #print "SENDING: <%d, %s>" %(message_type, data)

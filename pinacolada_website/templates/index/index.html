@@ -9,6 +9,14 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
+    <script
+      src="https://code.jquery.com/jquery-2.2.4.min.js"
+      integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/0.11.18/js/jquery.terminal.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/0.11.18/css/jquery.terminal.min.css" rel="stylesheet"/>
+
     <title>Cover Template for Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
@@ -22,6 +30,53 @@
     background: linear-gradient( rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7) ), url('../../static/background.gif');
     background-repeat: no-repeat;
     background-size: cover;
+  }
+  @keyframes blink {
+    0% { opacity: 1; }
+    25% { opacity: 0; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@-webkit-keyframes blink {
+    0% { opacity: 1; }
+    25% { opacity: 0; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@-ms-keyframes blink {
+    0% { opacity: 1; }
+    25% { opacity: 0; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@-moz-keyframes blink {
+    0% { opacity: 1; }
+    25% { opacity: 0; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+.cmd .cursor.blink {
+    background: #aaa;
+    -webkit-animation: blink 1s infinite linear;
+       -moz-animation: blink 1s infinite linear;
+        -ms-animation: blink 1s infinite linear;
+            animation: blink 1s linear infinite;
+    -webkit-box-shadow: 0 0 5px rgba(0,100,0,50);
+       -moz-box-shadow: 0 0 5px rgba(0,100,0,50);
+        -ms-box-shadow: 0 0 5px rgba(0,100,0,50);
+         -o-box-shadow: 0 0 5px rgba(0,100,0,50);
+            box-shadow: 0 0 5px rgba(0,100,0,50);
+}
+  pre {
+    color: #aaa;
+    font-family: Monaco;
+    font-size: 12px;
+  }
+  .prompt {
+  color: blue;
+  }
+  .cmd {
+  font-family: Monaco;
   }
   </style>
   <body>
@@ -37,19 +92,43 @@
               <h3 class="masthead-brand">Pi&ntildea Colada</h3>
               <nav class="nav nav-masthead">
                 <a class="nav-link active" href="#">Home</a>
-                <a class="nav-link" href="{{ url_for('index.terminal') }}">CLI</a>
               </nav>
             </div>
           </div>
 
           <div class="inner cover">
             <h1 class="cover-heading"></h1>
-            <p class="lead">Pi&ntildea Colada is the ultimate wifi pineapple. idk what else to put here.</p>
-          </div>
+
 
         </div>
 
       </div>
+        <center>
+        <div id="pinacolada_cli" style="text-align:left; border: 1px solid #aaa; border-radius:5px;font-family: Monaco"></div>
+        </center>
+          <script>
+              $('#pinacolada_cli').terminal(function(command, term) {
+                      console.log(command);
+                  $.ajax({
+                      type: "POST",
+                      url : '/command/',
+                      data : {
+                          'command' : command
+                      },
+                      success : function(data) {
+                          term.echo(data["response"],{raw:true});
+                          term.set_prompt(data["prompt"], {raw: true});
+                      },
+                  });}
+                  , {
+                  greetings: {{ greetings|tojson|safe}},
+                  name: 'PinaColada CLI',
+                  height: 400,
+                  width: 900,
+                  prompt: '>> '
+              });
+              </script>
+         </div>
 
     </div>
 

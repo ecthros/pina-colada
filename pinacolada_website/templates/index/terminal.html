@@ -20,14 +20,15 @@
                 'command' : command
             },
             success : function(data) {              
-                alert(data);
+                term.echo(data);
             },
         });}
         , {
-        greetings: 'PinaColada',
+        greetings: {{ greetings |tojson|safe}},
         name: 'PinaColada CLI',
-        height: 200,
-        prompt: 'PinaColada >> '
+        height: 600,
+        width: 900,
+        prompt: '>> '
     });
 </script>
 </div>
