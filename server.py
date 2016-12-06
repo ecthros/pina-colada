@@ -25,7 +25,7 @@ pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
 unpad = lambda s : s[0:-ord(s[-1])]
 
 SEP = "|:|"
-END_SEP = "!:!"
+END_SEP = "~"
 
 MSG = 0
 NEWC = 1
@@ -72,6 +72,7 @@ class Server():
     def server(self):
         try:
             try:
+                self.bind_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 self.bind_socket.bind(("0.0.0.0", self.port))
             except socket.error:
                 print("[!] %s startup failed - can't bind to %s:%d" % (self.name, "0.0.0.0", self.port))
@@ -81,8 +82,8 @@ class Server():
             sys.stdout.flush()
             while True:
                 try:
-                    client_sock, addr = self.bind_socket.accept()
-                    client = ssl.wrap_socket(client_sock, server_side=True, certfile="cert/server.crt", keyfile="cert/server.key")
+                    client, addr = self.bind_socket.accept()
+                    #client = ssl.wrap_socket(client_sock, server_side=True, certfile="cert/server.crt", keyfile="cert/server.key")
 
                     cid = random.randint(0, 99999)
                     self.ips[cid] = addr[0]
@@ -119,13 +120,18 @@ class Server():
             shared_prime = number.getPrime(10)
             shared_base = number.getPrime(10)
             server_secret = random.randint(0, 99)
-            c.send(str(shared_prime) + "|" + str(shared_base))
+            c.send(str(shared_prime) + "|" + str(shared_base) + "~")
             a = ((shared_base**server_secret) % shared_prime)
-            c.send("%ld" % a)  # send A
+            print "sending %s to client" %( str(shared_prime) + "|" + str(shared_base))
+            c.send("%ld~" % a)  # send A
             b = long(c.recv(1024))  # receive B
+            print "got %ld from client" % b
             self.keys[c] = pad("%ld" % ((b ** server_secret) % shared_prime))
-
-            _, name, name = self.unpack_data(self.decrypt(c.recv(1024), c))
+            print self.keys[c]
+            n = c.recv(1024)
+            print n
+            print self.decrypt(n, c)
+            _, name, name = self.unpack_data(self.decrypt(n, c))
             name = name.replace(END_SEP, "").replace(SEP, "")
             print("(%s)" % name)
             self.ids[cid] = name
@@ -133,20 +139,23 @@ class Server():
             if name == "PinaColada":
                 self.pi = c
                 app.config["server"] = self
-                print id(app)
-                print self
                 print "[*] Pina Colada has connected."
             else:
+                print '[*] Tunnel initialized for user %s' % name
                 self.tunnels[cid] = c
 
         except Exception as e:
             self.print_exc(e, "\n[!] Failed to initialize client connection for %d." % id, always=True)
             self.close(cid)
+            traceback.print_exc()
             return False
         try:
             while True:
                 d = c.recv(1024)
+                print d
+                print self.decrypt(d, c)
                 msgs = filter(None, self.decrypt(d, c).split(END_SEP))
+                print msgs
                 for m in msgs:
                     self.inbound(m, c)
                 #print d
@@ -257,7 +266,7 @@ class Server():
         return unpad(cipher.decrypt(enc[16:]))
 
     def direct(self, msg_type, requester, c, msg):
-        c.send(self.encrypt(self.pack_data(msg_type, requester, msg), c))
+        c.send(self.encrypt(self.pack_data(msg_type, requester, msg), c) + "\n")
 
     def unpack_data(self, msg):
         msgs = [self.replace_seps(s) for s in msg.split(SEP)]

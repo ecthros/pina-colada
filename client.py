@@ -26,7 +26,7 @@ SERVER_IP = "127.0.0.1"
 
 ERR_MSG = BAD + "Lost server connection. Please try again later."
 SEP = "|:|"
-END_SEP = "!:!"
+END_SEP = "~"
 
 ####################################################################
 #
@@ -70,16 +70,17 @@ class PinaColadaSocket(object):
     def connect(self):
         client = None
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            client = ssl.wrap_socket(s, ca_certs="cert/server.crt", cert_reqs=ssl.CERT_REQUIRED)
+            #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            #s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            #client = ssl.wrap_socket(s, ca_certs="cert/server.crt", cert_reqs=ssl.CERT_REQUIRED)
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             client.connect((self.ip, self.port))
             self.socket = client
             shared_prime, shared_base = client.recv(10).split("|")
             shared_prime = int(shared_prime)
-            shared_base = int(shared_base)
+            shared_base = int(shared_base.replace("~", ""))
             client_secret = random.randint(0, 99)
-            a = long(client.recv(1024))
+            a = long(client.recv(1024).replace("~", ""))
             b = (shared_base**client_secret) % shared_prime
             client.send("%ld" % b)
             self.keys[client] = pad("%ld" % ((a ** client_secret) % shared_prime))
@@ -141,7 +142,7 @@ class PinaColadaSocket(object):
 
     def send(self, message_type, requester, data):
         #print "SENDING: <%d, %s>" %(message_type, data)
-        self.socket.send(self.encrypt(self.pack_data(message_type, requester, data), self.socket))
+        self.socket.send(self.encrypt(self.pack_data(message_type, requester, data), self.socket) + "\n")
 
     def encrypt(self, string, sock):
         iv = Random.new().read(AES.block_size)
