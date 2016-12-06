@@ -1,3 +1,5 @@
+Not functioning as of 12/6
+
 All commands are reverted by sending the command
 	"restore"
 
