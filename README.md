@@ -1,6 +1,6 @@
 # Piña Colada ![Build Status](https://travis-ci.org/ecthros/pina-colada.svg?branch=master)
 
-Piña Colada, a powerful and extensible wireless pineapple, capable of performing a wide range of remote offensive attacks on a network. It can currently be controlled only via a command line interface, but a Command and Control remote server functionality is coming soon. An Android app will allow you to control the Piña Colada via the Command and Control server (Under Construction).
+Piña Colada, a powerful and extensible wireless pineapple, capable of performing a wide range of remote offensive attacks on a network. It can currently be controlled only via a command line interface, but a Command and Control remote server functionality is coming soon. An Android app allows you to control the Piña Colada via the Command and Control server.
 
 Please only use Piña Colada with explicit permission - please don't hack without asking.
 
