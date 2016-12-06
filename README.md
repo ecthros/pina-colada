@@ -1,6 +1,6 @@
 # Piña Colada ![Build Status](https://travis-ci.org/ecthros/pina-colada.svg?branch=master)
 
-Piña Colada, a powerful and extensible wireless drop box, capable of performing a wide range of remote offensive attacks on a network. It can currently be controlled only via a command line interface, but a Command and Control remote server functionality is coming soon. An Android app allows you to control the Piña Colada via the Command and Control server.
+Piña Colada, a powerful and extensible wireless drop box, capable of performing a wide range of remote offensive attacks on a network. It can be controlled via it's command line interface, or connect to it's Command and Control remote server to be controlled remotely, either by web application or Android app. 
 
 Please only use Piña Colada with explicit permission - please don't hack without asking.
 
@@ -74,14 +74,14 @@ msf > quit
 
 ## Capabilities
 
-Out of the box, Piña Colada comes with many, many capabilities, and more can be added dynamically at any time. These capabilities are organized into categories. Currently, the following attacks are supported: 
+Out of the box, Piña Colada comes with many, many capabilities, and more can be added dynamically at any time. These capabilities are organized into the following categories:
 
-1. Packet Sniffing - Passively sniffs the network and logs all traffic recorded
-2. Scanning - standard scanning types are implemented, and Piña Colada often out performs nmap for the same scan type
-3. TCP Hangups (from [tcpkiller](https://github.com/Kkevsterrr/tcpkiller))
-4. ARP Spoofing and Man In The Middle Attacks
-5. MS08 Exploitation
-6. Many, many, many more coming soon!
+1. Denial of Service (DOS)
+2. ARP
+3. Sniffing
+4. Exploitation
+5. Scanning
+6. Auxiliary Attacks
 
 To see a full list of available capabilities, run "list": 
 
@@ -93,7 +93,7 @@ To see a full list of available capabilities, run "list":
   + dos
    - syn
    - land
-   - tcpkiller
+   - [tcpkiller](https://github.com/Kkevsterrr/tcpkiller)
   + arp
    - arpSpoof
    - arpDos
@@ -155,7 +155,9 @@ immediately autocompletes to:
 
 Making it easy and fast to load arbitrary capapbilities quickly. 
 
+## Extensibility
 
+More capabilities can be added to Piña Colada at any time, even during runtime. A [template](https://github.com/ecthros/pina-colada/blob/master/capabilities/template.py) capability file is included in the capabilities folder for rapid development - simply copy the file and move it into one of the categories. It is automatically and dynamically available for use in the command line interface or web terminal, and can be deployed at any time. 
 
 ## Contributing
 Piña Colada is still very much in its infancy! Feel free to contribute to the project - simply fork it, make your changes, and issue a pull request. Have an idea for a killer capability, or something we could improve? Make an issue and we'll add it ASAP!
