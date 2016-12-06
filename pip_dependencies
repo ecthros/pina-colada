@@ -11,3 +11,4 @@ pycrypto
 nose
 flask_cors
 sslstrip
+ansi2html
