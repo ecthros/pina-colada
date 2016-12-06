@@ -23,7 +23,7 @@ class PinaColadaCLI(cmd.Cmd):
         self.core = core.PinaColada()
         self.ctrlc = False
         self.ascii_art()
-        print "Welcome to Pina Colada, a powerful Wifi Pineapple. Type \"help\" to see the list of available commands."
+        print "Welcome to Pina Colada, a powerful Wifi Dropbox. Type \"help\" to see the list of available commands."
         print "Defaulting to interface %s (%s)." % (self.core.default_iface, self.core.get_local_ip(self.core.default_iface))
 
     def ascii_art(self):
