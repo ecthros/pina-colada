@@ -4,7 +4,7 @@ Piña Colada, a powerful and extensible wireless drop box, capable of performing
 
 Please only use Piña Colada with explicit permission - please don't hack without asking.
 
-## Usage
+## General Usage
 Piña Colada comes with a number of built-in capabilities, and more can be dynamically added at any time. "Capabilities" are simply modules written to accomplish a task, such as a ARP Spoofing, DNS Poisoning, DOSing a user, etc. Piña Colada can be controlled using a familiar Metasploit like interface ("use" engages a capability, option setting works the same, etc), and is both quick to deploy and easy to use. 
 
 To start Piña Colada, first ensure that you have the required dependencies. [Scapy](http://www.secdev.org/projects/scapy/) is the backbone of the project, so make sure you install it before running. More dependencies may be added as the project is extended, so make sure your installation remains up to date as it's updated. An automatic deployment package is coming soon. 
@@ -21,7 +21,7 @@ Welcome to Pina Colada, a powerful Wifi Drop Box. Type "help" to see the list of
 >>
 ```
 
-## Controlling the Pi
+## Controlling the Pi (CLI)
 
 Piña Colada has a number of commands that enable to you to control different aspects about the pi and the network. 
 
@@ -155,9 +155,40 @@ immediately autocompletes to:
 
 Making it easy and fast to load arbitrary capapbilities quickly. 
 
-## Extensibility
+#### Extensibility
 
 More capabilities can be added to Piña Colada at any time, even during runtime. A [template](https://github.com/ecthros/pina-colada/blob/master/capabilities/template.py) capability file is included in the capabilities folder for rapid development - simply copy the file and move it into one of the categories. It is automatically and dynamically available for use in the command line interface or web terminal, and can be deployed at any time. 
+
+## Server Capability
+
+Piña Colada also contains a Command and Control server functionality to allow it be controlled remotely. This drop box functionality is especially useful when Piña Colada is deployed on a Raspberry Pi. To deploy the server on a remote location, run the following:
+
+```
+$ python server.py
+[*] Starting web sever...
+[*] PinaColada startup successful - listening on 0.0.0.0:9999
+[*] Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+```
+
+The server is now listening for connections and it's web server is accessible. In order to use the functionality of the command and control server, the pi must be connected. On the pi, run: 
+
+```
+$ sudo python client.py
+Initializing Network DB...
+[*] Attempting to connect to server
+[*] Successfully connected.
+```
+
+The server will also acknoledge a succesful connection: 
+```
+[*] Pina Colada has connected.
+```
+
+The web server runs on port 5000, so going to the IP address of the server <IP>:5000 gives you a drop web terminal into the pi. This works by tunneling commands to the client into the command line interface. The CnC server also allows for the android app to connect to the pi for control. All of this communication is encrypted to prevent from eavesdropping or MITM attacks against the pi. 
+
+### Encryption
+
+All communication to and from the pi are encrypted using AES/CBC/PKCS#5 encryption. Keys are negotiated via the Diffie-Hellman protocol upon connection to the pi. All tunneling through the CnC server is also encrypted for protection and prevention of a MITM attack. 
 
 ## Contributing
 Piña Colada is still very much in its infancy! Feel free to contribute to the project - simply fork it, make your changes, and issue a pull request. Have an idea for a killer capability, or something we could improve? Make an issue and we'll add it ASAP!
