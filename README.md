@@ -1,6 +1,6 @@
 # Piña Colada ![Build Status](https://travis-ci.org/ecthros/pina-colada.svg?branch=master)
 
-Piña Colada, a powerful and extensible wireless pineapple, capable of performing a wide range of remote offensive attacks on a network. It can currently be controlled only via a command line interface, but a Command and Control remote server functionality is coming soon. An Android app allows you to control the Piña Colada via the Command and Control server.
+Piña Colada, a powerful and extensible wireless drop box, capable of performing a wide range of remote offensive attacks on a network. It can currently be controlled only via a command line interface, but a Command and Control remote server functionality is coming soon. An Android app allows you to control the Piña Colada via the Command and Control server.
 
 Please only use Piña Colada with explicit permission - please don't hack without asking.
 
@@ -17,7 +17,7 @@ $ sudo python cli.py
   / /_/ / / __ \/ __ `/  / /   / __ \/ / __ `/ __  / __ `/    \_/
  / ____/ / / / / /_/ /  / /___/ /_/ / / /_/ / /_/ / /_/ /      Y
 /_/   /_/_/ /_/\__,_/   \____/\____/_/\__,_/\__,_/\__,_/      _|_
-Welcome to Pina Colada, a powerful Wifi Pineapple. Type "help" to see the list of available commands.
+Welcome to Pina Colada, a powerful Wifi Dropbox. Type "help" to see the list of available commands.
 >>
 ```
 
