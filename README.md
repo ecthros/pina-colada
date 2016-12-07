@@ -1,8 +1,10 @@
 # Piña Colada ![Build Status](https://travis-ci.org/ecthros/pina-colada.svg?branch=master)
 
-Piña Colada, a powerful and extensible wireless drop box, capable of performing a wide range of remote offensive attacks on a network. It can be controlled via it's command line interface, or connect to it's Command and Control remote server to be controlled remotely, either by web application or Android app. 
+Piña Colada, a powerful and extensible wireless drop box, capable of performing a wide range of remote offensive attacks on a network. It can be controlled via it's command line interface, or connect to it's Command and Control remote server to be controlled remotely, either by web application or Android app.
 
 Please only use Piña Colada with explicit permission - please don't hack without asking.
+
+[Watch some controlled attacks here.](https://www.youtube.com/playlist?list=PL22Ei9kfayhao0qeotVvlkRtfSRSMGoLq)
 
 ## General Usage
 Piña Colada comes with a number of built-in capabilities, and more can be dynamically added at any time. "Capabilities" are simply modules written to accomplish a task, such as a ARP Spoofing, DNS Poisoning, DOSing a user, etc. Piña Colada can be controlled using a familiar Metasploit like interface ("use" engages a capability, option setting works the same, etc), and is both quick to deploy and easy to use. 
