@@ -1,21 +1,43 @@
+echo '\n###\nUpdate & Installing main packages\n###\n'
+{
 apt-get update
 apt-get install -y git-core
 apt-get install -y postgresql
-apt-get install -y python-dev
-sudo service postgresql start
+apt-get install -y build-essential
+pip install --upgrade pip
+} >/dev/null
+
+echo '\n###\nStarting PostgreSQL\n###\n'
+service postgresql start
+
+echo '\n###\nConfiguring PostgreSQL User & Databadeb\n###\n'
 su -c "psql -c \"create user aces with password 'aces';\"" postgres
 su -c "createdb network" postgres
-sudo apt-get install -y python-netaddr
-sudo apt-get install -y build-essential python-dev libnetfilter-queue-dev
+
+echo '\n###\nInstalling packages\n###\n'
+{
+apt-get install -y python-dev python-nmap python-netaddr python-tk libnetfilter-queue-dev
+} >/dev/null
+
+echo '\n###\nInstalling python-netfilterqueue\n###\n'
+{
 git clone https://github.com/fqrouter/python-netfilterqueue.git
-cd python-netfilterqueue
-python setup.py install
-cd ..
-apt install -y python-nmap
-pip install --upgrade pip
-apt-get install -y python-tk
-python setup_postgres.py
-wget https://pypi.python.org/packages/bc/ab/c49f97516f78c2b0cacb4f45873abc4ca9872942a9c4c19ded8052c8edda/python-wifi-0.6.1.tar.bz2
+python python-netfilterqueue/setup.py install
+} &>/dev/null
+
+echo '\n###\nConfiguring PostgreSQL Tables\n###\n'
+python setup_postgres.py >/dev/null
+
+echo '\n###\nDownload Python-Wifi\n###\n'
+wget https://pypi.python.org/packages/bc/ab/c49f97516f78c2b0cacb4f45873abc4ca9872942a9c4c19ded8052c8edda/python-wifi-0.6.1.tar.bz2 &>/dev/null
+wait ${!}
+
+echo '\n###\nInstalling Python-Wifi\n###\n'
+{
 tar -xvf python-wifi-0.6.1.tar.bz2
-cd python-wifi-0.6.1/
-python setup.py install
+rm python-wifi-0.6.1.tar.bz2
+python python-wifi-0.6.1/setup.py install
+} >/dev/null
+
+sleep 3
+echo '\n###\nSetup Ended! ;)\n###\n'
